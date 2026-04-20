@@ -6,7 +6,6 @@
 <title>Daniik — Photography</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-  /* GLOBAL STYLES */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --ink: #0e0d0c; --paper: #f5f1eb; --warm: #c8a97e;
@@ -15,57 +14,70 @@
   html { scroll-behavior: smooth; }
   body { font-family: var(--sans); background: var(--ink); color: var(--paper); overflow-x: hidden; cursor: none; }
 
-  /* CUSTOM CURSOR */
+  /* Custom Cursor */
   .cursor { position: fixed; width: 10px; height: 10px; background: var(--warm); border-radius: 50%; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; transform: translate(-50%,-50%); }
   .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(200,169,126,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width 0.3s, height 0.3s; }
 
-  /* NAVIGATION */
   nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.8rem 3rem; display: flex; justify-content: space-between; align-items: center; mix-blend-mode: difference; }
   .logo { font-family: var(--serif); font-size: 1.3rem; letter-spacing: 0.12em; color: var(--paper); text-decoration: none; }
   .logo em { font-style: italic; color: var(--warm); }
   .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
   .nav-links a { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--paper); text-decoration: none; opacity: 0.7; }
-  .nav-book { opacity: 1 !important; color: var(--warm) !important; border: 1px solid rgba(200,169,126,0.4); padding: 0.5rem 1.2rem !important; }
 
-  /* HERO */
-  .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; position: relative; }
-  .hero-left { display: flex; flex-direction: column; justify-content: flex-end; padding: 8rem 3rem 5rem; }
+  /* Hero Section Fixed */
+  .hero { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 0.8fr; position: relative; overflow: hidden; }
+  .hero-left { display: flex; flex-direction: column; justify-content: flex-end; padding: 8rem 3rem 5rem; z-index: 2; }
   .hero-title { font-family: var(--serif); font-size: clamp(3.5rem, 6vw, 6rem); font-weight: 300; line-height: 1.05; margin-bottom: 2rem; }
   .hero-title em { font-style: italic; color: var(--warm); }
-  .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75); }
+  .hero-right { position: relative; width: 100%; height: 100vh; }
+  .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
 
-  /* MARQUEE */
-  .marquee-wrap { border-top: 1px solid rgba(200,169,126,0.2); border-bottom: 1px solid rgba(200,169,126,0.2); overflow: hidden; padding: 1rem 0; margin-bottom: 4rem; }
-  .marquee-track { display: flex; gap: 4rem; animation: marquee 20s linear infinite; }
-  @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
-
-  /* EDITORIAL SLIDER */
-  .slider-section { padding: 4rem 0; overflow: hidden; }
-  .slider-container { display: flex; gap: 25px; padding: 0 3rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  /* Auto-Slider Styles */
+  .slider-section { padding: 6rem 0; position: relative; }
+  .slider-wrapper { position: relative; width: 100%; overflow: hidden; }
+  .slider-container { 
+    display: flex; 
+    gap: 20px; 
+    padding: 0 3rem; 
+    overflow-x: auto; 
+    scroll-snap-type: x mandatory; 
+    scrollbar-width: none; 
+    scroll-behavior: smooth;
+  }
   .slider-container::-webkit-scrollbar { display: none; }
-  .slide { min-width: 50vw; height: 70vh; flex-shrink: 0; scroll-snap-align: center; overflow: hidden; background: #151413; }
-  .slide img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 1.2s cubic-bezier(0.23,1,0.32,1); }
-  .slide:hover img { filter: grayscale(0%); transform: scale(1.05); }
-  .slider-nav { padding: 2rem 3rem; display: flex; gap: 1rem; justify-content: flex-end; }
-  .s-btn { background: transparent; border: 1px solid var(--warm); color: var(--warm); padding: 12px 24px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; cursor: none; }
+  
+  .slide { 
+    min-width: 60vw; 
+    height: 75vh; 
+    flex-shrink: 0; 
+    scroll-snap-align: center; 
+    overflow: hidden; 
+    position: relative;
+  }
+  .slide img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s cubic-bezier(0.23,1,0.32,1); filter: grayscale(20%); }
+  
+  /* Arrows Hidden by Default - Show on Hover */
+  .slider-nav { 
+    position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; 
+    padding: 0 4rem; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; z-index: 10;
+  }
+  .slider-section:hover .slider-nav { opacity: 1; }
+  .s-btn { 
+    background: rgba(14, 13, 12, 0.6); border: 1px solid var(--warm); color: var(--warm); 
+    width: 60px; height: 60px; border-radius: 50%; pointer-events: auto; cursor: none;
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
 
-  /* DYNAMIC PRICING BOX */
+  /* Booking & Pricing */
   .booking-section { padding: 8rem 3rem; border-top: 1px solid rgba(200,169,126,0.12); }
   .price-calc-wrap { background: rgba(200,169,126,0.03); border: 1px solid rgba(200,169,126,0.1); padding: 3rem; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; }
   .time-option { padding: 1.5rem; border: 1px solid rgba(200,169,126,0.2); display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: none; }
-  .time-option.active { border-color: var(--warm); background: rgba(200,169,126,0.08); outline: 1px solid var(--warm); }
-  .est-price-box { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-left: 1px solid rgba(200,169,126,0.1); }
+  .time-option.active { border-color: var(--warm); background: rgba(200,169,126,0.08); }
   .est-value { font-family: var(--serif); font-size: 5rem; line-height: 1; }
-  .edits-tag { background: var(--warm); color: var(--ink); font-size: 0.6rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 600; margin-top: 10px; }
-
-  /* FORM STYLES */
-  .booking-body { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; padding-top: 5rem; }
-  .fg { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .fg label { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--warm); }
   .fg input, .fg textarea { background: transparent; border: none; border-bottom: 1px solid rgba(200,169,126,0.25); color: var(--paper); padding: 0.75rem 0; outline: none; width: 100%; font-family: var(--sans); }
   .bsubmit { background: var(--warm); color: var(--ink); border: none; padding: 1.2rem; cursor: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; width: 100%; }
 
-  .reveal { opacity:0; transform:translateY(30px); transition: 0.9s cubic-bezier(0.23,1,0.32,1); }
+  .reveal { opacity:0; transform:translateY(30px); transition: 0.9s ease-out; }
   .reveal.visible { opacity:1; transform:translateY(0); }
 </style>
 </head>
@@ -78,48 +90,41 @@
   <a href="#" class="logo">Dan<em>iik</em></a>
   <ul class="nav-links">
     <li><a href="#work">Work</a></li>
-    <li><a href="#booking" class="nav-book">Book a Session</a></li>
+    <li><a href="#booking" style="color: var(--warm); border: 1px solid var(--warm); padding: 0.5rem 1rem;">Book Session</a></li>
   </ul>
 </nav>
 
 <section class="hero">
   <div class="hero-left">
     <h1 class="hero-title">Capturing<br>moments<br>that <em>breathe</em></h1>
-    <a href="#work" style="color: var(--warm); text-decoration: none; letter-spacing: 2px; font-size: 0.7rem;">EXPLORE WORK ↓</a>
+    <p style="color: var(--muted); letter-spacing: 2px; font-size: 0.7rem; text-transform: uppercase;">Fine Art & Editorial Photography</p>
   </div>
   <div class="hero-right">
-    <img class="hero-img" src="images/IMG_4529.jpg">
+    <img class="hero-img" src="images/IMG_4556.jpg" alt="Daniik Hero">
   </div>
 </section>
 
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span style="font-family: var(--serif); font-style: italic;">PORTRAIT ✦ EDITORIAL ✦ LANDSCAPE ✦ FINE ART ✦ ARCHITECTURE ✦ DOCUMENTARY ✦ PORTRAIT ✦ EDITORIAL ✦</span>
-  </div>
-</div>
-
 <section class="slider-section" id="work">
-  <div class="reveal" style="padding-left: 3rem; margin-bottom: 3rem;">
-    <p style="color: var(--warm); letter-spacing: 3px; font-size: 0.7rem; text-transform: uppercase;">Personal Work</p>
-    <h2 style="font-family: var(--serif); font-size: 3.5rem; font-weight: 300;">Visual <em>Chronicles</em></h2>
+  <div class="reveal" style="padding-left: 3rem; margin-bottom: 2rem;">
+    <h2 style="font-family: var(--serif); font-size: 3rem; font-weight: 300;">Selected <em>Works</em></h2>
   </div>
 
-  <div class="slider-container" id="slider">
-    <div class="slide"><img src="images/IMG_5411.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5415.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5418.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5439.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_4650.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_4853.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5583.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5747.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_5864.jpg" alt="Work"></div>
-    <div class="slide"><img src="images/IMG_6040.jpg" alt="Work"></div>
-  </div>
-
-  <div class="slider-nav">
-    <button class="s-btn" onclick="document.getElementById('slider').scrollBy({left: -500, behavior: 'smooth'})">← Prev</button>
-    <button class="s-btn" onclick="document.getElementById('slider').scrollBy({left: 500, behavior: 'smooth'})">Next →</button>
+  <div class="slider-wrapper">
+    <div class="slider-container" id="slider">
+      <div class="slide"><img src="images/IMG_5411.jpg"></div>
+      <div class="slide"><img src="images/IMG_5415.jpg"></div>
+      <div class="slide"><img src="images/IMG_5418.jpg"></div>
+      <div class="slide"><img src="images/IMG_5439.jpg"></div>
+      <div class="slide"><img src="images/IMG_4650.jpg"></div>
+      <div class="slide"><img src="images/IMG_4853.jpg"></div>
+      <div class="slide"><img src="images/IMG_5583.jpg"></div>
+      <div class="slide"><img src="images/IMG_5747.jpg"></div>
+    </div>
+    
+    <div class="slider-nav">
+      <button class="s-btn" id="prevBtn">←</button>
+      <button class="s-btn" id="nextBtn">→</button>
+    </div>
   </div>
 </section>
 
@@ -132,52 +137,76 @@
       <div class="time-option" data-time="3hr+" data-price="55"><span>3+ Hours</span><span>$55</span></div>
     </div>
     <div class="est-price-box">
-      <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--warm);">Investment</p>
+      <p style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 3px; color: var(--warm);">Total Investment</p>
       <h3 class="est-value" id="displayPrice">$0</h3>
-      <div class="edits-tag">Professional Edits Included</div>
+      <p style="font-size: 0.6rem; color: var(--muted); margin-top: 10px;">Edits Included</p>
     </div>
   </div>
 
-  <div class="booking-body">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; padding-top: 4rem;">
     <form action="https://formspree.io/f/mlgalbve" method="POST" class="reveal">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-          <div class="fg"><label>First Name</label><input type="text" name="first_name" required></div>
-          <div class="fg"><label>Last Name</label><input type="text" name="last_name" required></div>
+          <div class="fg"><label>First Name</label><input type="text" name="fname" required></div>
+          <div class="fg"><label>Last Name</label><input type="text" name="lname" required></div>
         </div>
-        <div class="fg"><label>Email Address</label><input type="email" name="email" required></div>
+        <div class="fg"><label>Email</label><input type="email" name="email" required></div>
         <input type="hidden" name="duration" id="inputDuration">
-        <input type="hidden" name="estimated_price" id="inputPrice">
-        <div class="fg"><label>Vision / Project Details</label><textarea name="message" rows="4"></textarea></div>
-        <button type="submit" class="bsubmit">Send Booking Request</button>
+        <input type="hidden" name="price" id="inputPrice">
+        <div class="fg"><label>Details</label><textarea name="message" rows="3"></textarea></div>
+        <button type="submit" class="bsubmit">Request Booking</button>
     </form>
-    <div class="reveal" style="border-left: 1px solid var(--warm); padding-left: 2rem; font-size: 0.85rem; color: var(--muted); line-height: 2.5;">
-        <h4 style="color: var(--paper); font-family: var(--serif); margin-bottom: 1rem; font-size: 1.4rem;">The Small Print</h4>
-        ✦ Professional editing included in all sessions.<br>
-        ✦ High-resolution digital gallery delivery.<br>
-        ✦ 25% deposit required to confirm date.<br>
-        ✦ 14-day turnaround time.
+    <div class="reveal" style="font-size: 0.8rem; color: var(--muted); line-height: 2.5; border-left: 1px solid var(--warm); padding-left: 2rem;">
+        ✦ Edited High-Res Gallery<br>✦ 25% Deposit Required<br>✦ 14-Day Delivery
     </div>
   </div>
 </section>
 
 <script>
+  // Cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
   (function anim(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
 
-  document.querySelectorAll('.time-option').forEach(option => {
-    option.addEventListener('click', () => {
+  // Auto Slider Logic
+  const slider = document.getElementById('slider');
+  let isPaused = false;
+  
+  function autoScroll() {
+    if(!isPaused) {
+      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth) {
+        slider.scrollTo({left: 0, behavior: 'smooth'});
+      } else {
+        slider.scrollBy({left: 400, behavior: 'smooth'});
+      }
+    }
+  }
+
+  let timer = setInterval(autoScroll, 3000);
+
+  slider.addEventListener('mouseenter', () => isPaused = true);
+  slider.addEventListener('mouseleave', () => isPaused = false);
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    slider.scrollBy({left: 500, behavior: 'smooth'});
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    slider.scrollBy({left: -500, behavior: 'smooth'});
+  });
+
+  // Price Calc
+  document.querySelectorAll('.time-option').forEach(opt => {
+    opt.addEventListener('click', () => {
       document.querySelectorAll('.time-option').forEach(o => o.classList.remove('active'));
-      option.classList.add('active');
-      const p = option.dataset.price;
-      document.getElementById('displayPrice').textContent = '$' + p;
-      document.getElementById('inputPrice').value = '$' + p;
-      document.getElementById('inputDuration').value = option.dataset.time;
+      opt.classList.add('active');
+      document.getElementById('displayPrice').textContent = '$' + opt.dataset.price;
+      document.getElementById('inputPrice').value = '$' + opt.dataset.price;
+      document.getElementById('inputDuration').value = opt.dataset.time;
     });
   });
 
+  // Reveal
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
