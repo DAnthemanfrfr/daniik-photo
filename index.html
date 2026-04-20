@@ -32,35 +32,57 @@
   .hero-right { position: relative; width: 100%; height: 100vh; }
   .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
 
-  /* Slider */
-  .slider-section { padding: 6rem 0; position: relative; }
+  /* FIX: Slider CSS */
+  .slider-section { padding: 4rem 0; position: relative; background: #000; }
   .slider-wrapper { position: relative; width: 100%; overflow: hidden; }
-  .slider-container { display: flex; gap: 20px; padding: 0 3rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; }
+  .slider-container { 
+    display: flex; 
+    gap: 40px; 
+    padding: 0 10vw; 
+    overflow-x: auto; 
+    scroll-snap-type: x mandatory; 
+    scrollbar-width: none; 
+    scroll-behavior: smooth;
+    align-items: center;
+    height: 85vh;
+  }
   .slider-container::-webkit-scrollbar { display: none; }
-  .slide { min-width: 60vw; height: 75vh; flex-shrink: 0; scroll-snap-align: center; overflow: hidden; position: relative; }
-  .slide img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s cubic-bezier(0.23,1,0.32,1); filter: grayscale(20%); }
-  .slider-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 4rem; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; z-index: 10; }
+  
+  .slide { 
+    min-width: 80vw; 
+    height: 80vh; 
+    flex-shrink: 0; 
+    scroll-snap-align: center; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Use 'contain' so the image is never cut off */
+  .slide img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+    transition: transform 0.8s ease;
+  }
+  
+  .slider-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 2rem; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; z-index: 10; }
   .slider-section:hover .slider-nav { opacity: 1; }
-  .s-btn { background: rgba(14, 13, 12, 0.6); border: 1px solid var(--warm); color: var(--warm); width: 60px; height: 60px; border-radius: 50%; pointer-events: auto; cursor: none; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; }
+  .s-btn { background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); border: 1px solid var(--warm); color: var(--warm); width: 50px; height: 50px; border-radius: 50%; pointer-events: auto; cursor: none; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
   .s-btn:hover { background: var(--warm); color: var(--ink); }
 
   /* Pricing & Booking */
   .booking-section { padding: 8rem 3rem; border-top: 1px solid rgba(200,169,126,0.12); }
   .price-calc-wrap { background: rgba(200,169,126,0.03); border: 1px solid rgba(200,169,126,0.1); padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-  
   .selector-group { display: flex; flex-direction: column; gap: 1.5rem; }
   .selector-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--warm); margin-bottom: 0.5rem; display: block;}
-  
   .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .calc-option { padding: 1rem; border: 1px solid rgba(200,169,126,0.2); font-size: 0.8rem; transition: 0.3s; cursor: none; text-align: center; }
   .calc-option.active { border-color: var(--warm); background: rgba(200,169,126,0.1); color: var(--warm); }
-  
   .est-price-box { border-left: 1px solid rgba(200,169,126,0.1); padding-left: 3rem; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   .est-value { font-family: var(--serif); font-size: 5rem; line-height: 1; }
-  
   .fg input, .fg textarea { background: transparent; border: none; border-bottom: 1px solid rgba(200,169,126,0.25); color: var(--paper); padding: 0.75rem 0; outline: none; width: 100%; font-family: var(--sans); }
   .bsubmit { background: var(--warm); color: var(--ink); border: none; padding: 1.2rem; cursor: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; width: 100%; transition: 0.3s; margin-top: 2rem; }
-
   .reveal { opacity:0; transform:translateY(30px); transition: 0.9s ease-out; }
   .reveal.visible { opacity:1; transform:translateY(0); }
 </style>
@@ -93,12 +115,12 @@
     <div class="slider-container" id="slider">
       <div class="slide"><img src="images/IMG_5411.jpg"></div>
       <div class="slide"><img src="images/IMG_5415.jpg"></div>
-      <div class="slide"><img src="images/IMG_5418.jpg"></div>
       <div class="slide"><img src="images/IMG_5439.jpg"></div>
       <div class="slide"><img src="images/IMG_4650.jpg"></div>
-      <div class="slide"><img src="images/IMG_4853.jpg"></div>
-      <div class="slide"><img src="images/IMG_5583.jpg"></div>
+      <div class="slide"><img src="images/IMG_5864.jpg"></div>
+      <div class="slide"><img src="images/IMG_6032.jpg"></div>
       <div class="slide"><img src="images/IMG_5747.jpg"></div>
+      <div class="slide"><img src="images/IMG_5897.jpg"></div>
     </div>
     <div class="slider-nav">
       <button class="s-btn" id="prevBtn">←</button>
@@ -171,19 +193,38 @@
 
   const slider = document.getElementById('slider');
   let isPaused = false;
-  function getSlideWidth() { return document.querySelector('.slide').offsetWidth + 20; }
+  
+  // Logic to move by exactly one full slide width
+  function getSlideWidth() { 
+    const slide = document.querySelector('.slide');
+    return slide.offsetWidth + 40; // Slide width + gap
+  }
+
   function autoScroll() {
     if(!isPaused) {
-      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10) { slider.scrollTo({left: 0, behavior: 'smooth'}); }
-      else { slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'}); }
+      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10) { 
+        slider.scrollTo({left: 0, behavior: 'smooth'}); 
+      } else { 
+        slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'}); 
+      }
     }
   }
-  let timer = setInterval(autoScroll, 3500);
-  document.querySelector('.slider-section').addEventListener('mouseenter', () => isPaused = true);
-  document.querySelector('.slider-section').addEventListener('mouseleave', () => isPaused = false);
-  document.getElementById('nextBtn').addEventListener('click', () => slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'}));
-  document.getElementById('prevBtn').addEventListener('click', () => slider.scrollBy({left: -getSlideWidth(), behavior: 'smooth'}));
 
+  let timer = setInterval(autoScroll, 4000);
+
+  // Pause when hovering over the slider section
+  const sliderSection = document.querySelector('.slider-section');
+  sliderSection.addEventListener('mouseenter', () => isPaused = true);
+  sliderSection.addEventListener('mouseleave', () => isPaused = false);
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'});
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    slider.scrollBy({left: -getSlideWidth(), behavior: 'smooth'});
+  });
+
+  // Price Calculation Logic
   const typeOpts = document.querySelectorAll('.type-opt');
   const timeOpts = document.querySelectorAll('.time-opt');
   const displayPrice = document.getElementById('displayPrice');
@@ -191,9 +232,7 @@
   function calculate() {
     const activeType = document.querySelector('.type-opt.active');
     const activeTime = document.querySelector('.time-opt.active');
-    
     const total = activeTime.dataset.base;
-    
     displayPrice.textContent = '$' + total;
     document.getElementById('inputPrice').value = '$' + total;
     document.getElementById('inputEventType').value = activeType.dataset.value;
