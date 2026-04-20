@@ -58,7 +58,7 @@ body::before{
 }
 
 /* ═══════════════════════════════════════════
-   LOADER (BULLETPROOF)
+   LOADER (BULLETPROOF & LONGER)
 ═══════════════════════════════════════════ */
 #ldr{
   position:fixed;inset:0;top:0;left:0;right:0;bottom:0;
@@ -78,7 +78,7 @@ body::before{
 }
 .ldr-logo em{font-style:italic;color:#c8a97e}
 .ldr-line{width:80px;height:1px;background:rgba(200,169,126,.15);overflow:hidden}
-.ldr-fill{height:100%;background:linear-gradient(90deg,#9e7f58,#dfc49a);animation:ldrSlide 1.2s ease forwards}
+.ldr-fill{height:100%;background:linear-gradient(90deg,#9e7f58,#dfc49a);animation:ldrSlide 2.5s ease forwards} /* Extended to 2.5s */
 @keyframes ldrPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 @keyframes ldrSlide{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
 </style>
@@ -820,17 +820,16 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0);
 
-/* ── BULLETPROOF LOADER INITIALIZATION ── */
+/* ── BULLETPROOF LOADER INITIALIZATION (EXTENDED) ── */
 (function(){
   const ldr = document.getElementById('ldr');
   const removeLoader = () => { 
     if (ldr) ldr.classList.add('out'); 
     window.scrollTo(0, 0); // Double safety net to ensure we are at the top when the loader hides
   };
-  // Wait for window to load...
-  window.addEventListener('load', removeLoader);
-  // ...but FORCE hide after 1.2s to prevent black screens no matter what
-  setTimeout(removeLoader, 1200);
+  
+  // Force the loader to stay up for exactly 2.5 seconds to build anticipation
+  setTimeout(removeLoader, 2500); 
 })();
 
 /* ── ALL IMAGES ── */
