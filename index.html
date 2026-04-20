@@ -32,43 +32,42 @@
   .hero-right { position: relative; width: 100%; height: 100vh; }
   .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
 
-  /* FIX: Slider CSS */
-  .slider-section { padding: 4rem 0; position: relative; background: #000; }
-  .slider-wrapper { position: relative; width: 100%; overflow: hidden; }
+  /* ACCURACY FIX: Fixed Container Slider */
+  .slider-section { padding: 5vh 0; background: #000; overflow: hidden; }
+  .slider-wrapper { position: relative; width: 100vw; height: 80vh; }
+  
   .slider-container { 
     display: flex; 
-    gap: 40px; 
-    padding: 0 10vw; 
+    height: 100%;
     overflow-x: auto; 
     scroll-snap-type: x mandatory; 
     scrollbar-width: none; 
     scroll-behavior: smooth;
-    align-items: center;
-    height: 85vh;
+    -webkit-overflow-scrolling: touch;
   }
   .slider-container::-webkit-scrollbar { display: none; }
   
   .slide { 
-    min-width: 80vw; 
-    height: 80vh; 
+    min-width: 100vw; /* One slide per view for max focus */
+    height: 100%; 
     flex-shrink: 0; 
     scroll-snap-align: center; 
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 50px;
   }
   
-  /* Use 'contain' so the image is never cut off */
   .slide img { 
     max-width: 100%; 
     max-height: 100%; 
-    object-fit: contain; 
-    transition: transform 0.8s ease;
+    object-fit: contain; /* Shows full image without cropping */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
   
-  .slider-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 2rem; pointer-events: none; opacity: 0; transition: opacity 0.4s ease; z-index: 10; }
+  .slider-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 3rem; pointer-events: none; z-index: 10; opacity: 0; transition: 0.4s; }
   .slider-section:hover .slider-nav { opacity: 1; }
-  .s-btn { background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); border: 1px solid var(--warm); color: var(--warm); width: 50px; height: 50px; border-radius: 50%; pointer-events: auto; cursor: none; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+  .s-btn { background: rgba(245,241,235,0.1); backdrop-filter: blur(10px); border: 1px solid var(--warm); color: var(--warm); width: 60px; height: 60px; border-radius: 50%; pointer-events: auto; cursor: none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.3s; }
   .s-btn:hover { background: var(--warm); color: var(--ink); }
 
   /* Pricing & Booking */
@@ -113,18 +112,34 @@
 <section class="slider-section" id="work">
   <div class="slider-wrapper">
     <div class="slider-container" id="slider">
+      <div class="slide"><img src="images/IMG_4529.jpg"></div>
+      <div class="slide"><img src="images/IMG_4650.jpg"></div>
+      <div class="slide"><img src="images/IMG_4668.jpg"></div>
+      <div class="slide"><img src="images/IMG_4728.jpg"></div>
+      <div class="slide"><img src="images/IMG_4853.jpg"></div>
+      <div class="slide"><img src="images/IMG_4860.jpg"></div>
       <div class="slide"><img src="images/IMG_5411.jpg"></div>
       <div class="slide"><img src="images/IMG_5415.jpg"></div>
+      <div class="slide"><img src="images/IMG_5418.jpg"></div>
       <div class="slide"><img src="images/IMG_5439.jpg"></div>
-      <div class="slide"><img src="images/IMG_4650.jpg"></div>
-      <div class="slide"><img src="images/IMG_5864.jpg"></div>
-      <div class="slide"><img src="images/IMG_6032.jpg"></div>
+      <div class="slide"><img src="images/IMG_5479.jpg"></div>
+      <div class="slide"><img src="images/IMG_5485.jpg"></div>
+      <div class="slide"><img src="images/IMG_5515.jpg"></div>
+      <div class="slide"><img src="images/IMG_5583.jpg"></div>
+      <div class="slide"><img src="images/IMG_5595.jpg"></div>
+      <div class="slide"><img src="images/IMG_5623.jpg"></div>
+      <div class="slide"><img src="images/IMG_5668.jpg"></div>
       <div class="slide"><img src="images/IMG_5747.jpg"></div>
+      <div class="slide"><img src="images/IMG_5748.jpg"></div>
+      <div class="slide"><img src="images/IMG_5831.jpg"></div>
+      <div class="slide"><img src="images/IMG_5864.jpg"></div>
       <div class="slide"><img src="images/IMG_5897.jpg"></div>
+      <div class="slide"><img src="images/IMG_6032.jpg"></div>
+      <div class="slide"><img src="images/IMG_6040.jpg"></div>
     </div>
     <div class="slider-nav">
-      <button class="s-btn" id="prevBtn">←</button>
-      <button class="s-btn" id="nextBtn">→</button>
+      <button class="s-btn" id="prevBtn">‹</button>
+      <button class="s-btn" id="nextBtn">›</button>
     </div>
   </div>
 </section>
@@ -185,70 +200,58 @@
 </section>
 
 <script>
+  // Smooth Cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
   (function anim(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
 
+  // ACCURACY FIX Slider Logic
   const slider = document.getElementById('slider');
   let isPaused = false;
   
-  // Logic to move by exactly one full slide width
-  function getSlideWidth() { 
-    const slide = document.querySelector('.slide');
-    return slide.offsetWidth + 40; // Slide width + gap
-  }
-
-  function autoScroll() {
+  // Scrolls exactly 100% of the viewport width to ensure alignment
+  function scrollNext() {
     if(!isPaused) {
-      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10) { 
-        slider.scrollTo({left: 0, behavior: 'smooth'}); 
-      } else { 
-        slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'}); 
+      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10) {
+        slider.scrollTo({left: 0, behavior: 'smooth'});
+      } else {
+        slider.scrollBy({left: window.innerWidth, behavior: 'smooth'});
       }
     }
   }
 
-  let timer = setInterval(autoScroll, 4000);
+  let timer = setInterval(scrollNext, 4500);
 
-  // Pause when hovering over the slider section
-  const sliderSection = document.querySelector('.slider-section');
-  sliderSection.addEventListener('mouseenter', () => isPaused = true);
-  sliderSection.addEventListener('mouseleave', () => isPaused = false);
+  slider.parentElement.addEventListener('mouseenter', () => isPaused = true);
+  slider.parentElement.addEventListener('mouseleave', () => isPaused = false);
 
   document.getElementById('nextBtn').addEventListener('click', () => {
-    slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'});
+    slider.scrollBy({left: window.innerWidth, behavior: 'smooth'});
   });
   document.getElementById('prevBtn').addEventListener('click', () => {
-    slider.scrollBy({left: -getSlideWidth(), behavior: 'smooth'});
+    slider.scrollBy({left: -window.innerWidth, behavior: 'smooth'});
   });
 
-  // Price Calculation Logic
+  // Price Logic
   const typeOpts = document.querySelectorAll('.type-opt');
   const timeOpts = document.querySelectorAll('.time-opt');
-  const displayPrice = document.getElementById('displayPrice');
-
   function calculate() {
-    const activeType = document.querySelector('.type-opt.active');
     const activeTime = document.querySelector('.time-opt.active');
     const total = activeTime.dataset.base;
-    displayPrice.textContent = '$' + total;
+    document.getElementById('displayPrice').textContent = '$' + total;
     document.getElementById('inputPrice').value = '$' + total;
-    document.getElementById('inputEventType').value = activeType.dataset.value;
+    document.getElementById('inputEventType').value = document.querySelector('.type-opt.active').dataset.value;
     document.getElementById('inputDuration').value = activeTime.dataset.time;
   }
-
   typeOpts.forEach(opt => opt.addEventListener('click', () => {
     typeOpts.forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    calculate();
+    opt.classList.add('active'); calculate();
   }));
-
   timeOpts.forEach(opt => opt.addEventListener('click', () => {
     timeOpts.forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    calculate();
+    opt.classList.add('active'); calculate();
   }));
 
   const obs = new IntersectionObserver(entries => {
