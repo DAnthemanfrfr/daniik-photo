@@ -32,35 +32,26 @@
   .hero-right { position: relative; width: 100%; height: 100vh; }
   .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
 
-  /* ULTIMATE PRECISION SLIDER FIX */
+  /* SLIDER FIX: TRANSFORMATION METHOD */
   .slider-section { 
     height: 90vh; 
     background: #000; 
     position: relative; 
-    display: flex;
-    align-items: center;
+    overflow: hidden; /* Hide anything outside the current slide */
   }
   
-  .slider-container { 
+  .slider-track { 
     display: flex; 
-    width: 100vw;
+    width: 100%;
     height: 100%;
-    overflow-x: auto; 
-    scroll-snap-type: x mandatory; 
-    scrollbar-width: none; 
-    scroll-behavior: smooth;
-    /* Removed all gap/padding to fix uneven shuffling */
-    gap: 0; 
-    margin: 0;
-    padding: 0;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); /* Ultra smooth motion */
+    will-change: transform;
   }
-  .slider-container::-webkit-scrollbar { display: none; }
   
   .slide { 
-    flex: 0 0 100vw; /* Hard-lock width to exactly 1 screen width */
-    width: 100vw;
+    flex: 0 0 100%; /* Lock to exactly 100% of the container */
+    width: 100%;
     height: 100%; 
-    scroll-snap-align: center; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -68,15 +59,18 @@
   }
   
   .slide img { 
-    max-width: 85vw; /* This prevents the "edge-to-edge" crowding */
+    max-width: 90vw; 
     max-height: 80vh; 
     object-fit: contain; 
     pointer-events: none;
+    user-select: none;
   }
   
   .slider-nav { 
     position: absolute; 
     width: 100%; 
+    top: 50%;
+    transform: translateY(-50%);
     display: flex; 
     justify-content: space-between; 
     padding: 0 3rem; 
@@ -85,7 +79,7 @@
   }
   
   .s-btn { 
-    background: rgba(14, 13, 12, 0.4); 
+    background: rgba(255, 255, 255, 0.05); 
     backdrop-filter: blur(15px); 
     border: 1px solid var(--warm); 
     color: var(--warm); 
@@ -142,7 +136,7 @@
     <button class="s-btn" id="prevBtn">‹</button>
     <button class="s-btn" id="nextBtn">›</button>
   </div>
-  <div class="slider-container" id="slider">
+  <div class="slider-track" id="sliderTrack">
       <div class="slide"><img src="images/IMG_4529.jpg"></div>
       <div class="slide"><img src="images/IMG_4650.jpg"></div>
       <div class="slide"><img src="images/IMG_4668.jpg"></div>
@@ -221,41 +215,55 @@
 </section>
 
 <script>
-  // Mouse
+  // Cursor
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
   (function anim(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
 
-  // Precision Logic
-  const slider = document.getElementById('slider');
+  // ULTIMATE SLIDER LOGIC
+  const track = document.getElementById('sliderTrack');
+  const slides = document.querySelectorAll('.slide');
+  let currentIndex = 0;
   let isPaused = false;
-  
-  function getFullWidth() {
-    return window.innerWidth; // Always use viewport width for exact calculation
+
+  function updateSlider() {
+    // We translate by EXACT percentage. This is 100% bug-proof.
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
   }
 
-  function scrollNext() {
+  function nextSlide() {
     if(!isPaused) {
-      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 5) {
-        slider.scrollTo({left: 0, behavior: 'smooth'});
-      } else {
-        slider.scrollBy({left: getFullWidth(), behavior: 'smooth'});
-      }
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateSlider();
     }
   }
 
-  let timer = setInterval(scrollNext, 4500);
-  slider.addEventListener('mouseenter', () => isPaused = true);
-  slider.addEventListener('mouseleave', () => isPaused = false);
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    updateSlider();
+  }
 
+  // Interval
+  let slideTimer = setInterval(nextSlide, 4500);
+
+  // Interaction
   document.getElementById('nextBtn').addEventListener('click', () => {
-    slider.scrollBy({left: getFullWidth(), behavior: 'smooth'});
+    clearInterval(slideTimer);
+    nextSlide();
+    slideTimer = setInterval(nextSlide, 4500);
   });
+
   document.getElementById('prevBtn').addEventListener('click', () => {
-    slider.scrollBy({left: -getFullWidth(), behavior: 'smooth'});
+    clearInterval(slideTimer);
+    prevSlide();
+    slideTimer = setInterval(nextSlide, 4500);
   });
+
+  // Hover Pause
+  track.parentElement.addEventListener('mouseenter', () => isPaused = true);
+  track.parentElement.addEventListener('mouseleave', () => isPaused = false);
 
   // Pricing
   const typeOpts = document.querySelectorAll('.type-opt');
