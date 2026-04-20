@@ -113,26 +113,26 @@
       <div>
         <span class="selector-label">1. Select Event Type</span>
         <div class="option-grid">
-          <div class="calc-option type-opt active" data-value="Sports" data-multiplier="1">Sports</div>
-          <div class="calc-option type-opt" data-value="Portraits" data-multiplier="1.2">Portraits</div>
-          <div class="calc-option type-opt" data-value="Events" data-multiplier="1.5">Events / Social</div>
+          <div class="calc-option type-opt active" data-value="Sports">Sports</div>
+          <div class="calc-option type-opt" data-value="Portraits">Portraits</div>
+          <div class="calc-option type-opt" data-value="Events">Events / Social</div>
         </div>
       </div>
       
       <div>
         <span class="selector-label">2. Select Duration</span>
         <div class="option-grid">
-          <div class="calc-option time-opt active" data-time="Short" data-base="40">30-60 Min</div>
-          <div class="calc-option time-opt" data-time="Medium" data-base="75">1-2 Hours</div>
-          <div class="calc-option time-opt" data-time="Half Day" data-base="140">3-4 Hours</div>
-          <div class="calc-option time-opt" data-time="Full Day" data-base="250">Full Day</div>
+          <div class="calc-option time-opt active" data-time="0-45m" data-base="15">0-45m</div>
+          <div class="calc-option time-opt" data-time="45m-1:15h" data-base="30">45m-1:15h</div>
+          <div class="calc-option time-opt" data-time="1:15h-2h" data-base="45">1:15h-2h</div>
+          <div class="calc-option time-opt" data-time="2h+" data-base="55">2h+</div>
         </div>
       </div>
     </div>
 
     <div class="est-price-box">
       <p style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 3px; color: var(--warm);">Estimated Investment</p>
-      <h3 class="est-value" id="displayPrice">$40</h3>
+      <h3 class="est-value" id="displayPrice">$15</h3>
       <p style="font-size: 0.6rem; color: var(--muted); margin-top: 10px; background: rgba(200,169,126,0.1); padding: 5px 12px; border-radius: 20px;">Professional Edits Included</p>
     </div>
   </div>
@@ -146,8 +146,8 @@
         <div class="fg"><label>Email</label><input type="email" name="email" required></div>
         
         <input type="hidden" name="event_type" id="inputEventType" value="Sports">
-        <input type="hidden" name="duration" id="inputDuration" value="Short">
-        <input type="hidden" name="quoted_price" id="inputPrice" value="$40">
+        <input type="hidden" name="duration" id="inputDuration" value="0-45m">
+        <input type="hidden" name="quoted_price" id="inputPrice" value="$15">
         
         <div class="fg"><label>Details (Date, Location, Field#, etc.)</label><textarea name="message" rows="3" required></textarea></div>
         <button type="submit" class="bsubmit">Request Booking</button>
@@ -184,7 +184,6 @@
   document.getElementById('nextBtn').addEventListener('click', () => slider.scrollBy({left: getSlideWidth(), behavior: 'smooth'}));
   document.getElementById('prevBtn').addEventListener('click', () => slider.scrollBy({left: -getSlideWidth(), behavior: 'smooth'}));
 
-  // Price Calculation Logic
   const typeOpts = document.querySelectorAll('.type-opt');
   const timeOpts = document.querySelectorAll('.time-opt');
   const displayPrice = document.getElementById('displayPrice');
@@ -193,9 +192,7 @@
     const activeType = document.querySelector('.type-opt.active');
     const activeTime = document.querySelector('.time-opt.active');
     
-    const base = parseFloat(activeTime.dataset.base);
-    const multiplier = parseFloat(activeType.dataset.multiplier);
-    const total = Math.round(base * multiplier);
+    const total = activeTime.dataset.base;
     
     displayPrice.textContent = '$' + total;
     document.getElementById('inputPrice').value = '$' + total;
