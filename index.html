@@ -1,94 +1,695 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080706">
 <title>Daniik — Photography</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<meta name="description" content="Sports, portraits and events photography by @daniik_photo. Book a session.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --ink: #0e0d0c; --paper: #f5f1eb; --warm: #c8a97e;
-    --muted: #8a8077; --serif: 'Cormorant Garamond', serif; --sans: 'Jost', sans-serif;
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: var(--sans); background: var(--ink); color: var(--paper); overflow-x: hidden; cursor: none; }
+/* ─── RESET ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#080706;--paper:#f2ede6;
+  --gold:#c8a97e;--gold2:#dfc49a;
+  --muted:#847c72;--muted2:#5c564f;
+  --serif:'Cormorant Garamond',serif;
+  --sans:'Jost',sans-serif;
+  --ease:cubic-bezier(0.23,1,0.32,1);
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);background:var(--ink);color:var(--paper);overflow-x:hidden}
+img{display:block;max-width:100%}
+button{font-family:inherit;background:none;border:none}
 
-  /* Custom Cursor */
-  .cursor { position: fixed; width: 10px; height: 10px; background: var(--warm); border-radius: 50%; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; transform: translate(-50%,-50%); }
-  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(200,169,126,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width 0.3s, height 0.3s; }
+/* ─── GRAIN ─────────────────────────────────── */
+body::before{
+content:’’;position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.035;
+background-image:url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=’.85’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”);
+background-size:160px 160px;
+}
 
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.8rem 3rem; display: flex; justify-content: space-between; align-items: center; mix-blend-mode: difference; }
-  .logo { font-family: var(--serif); font-size: 1.3rem; letter-spacing: 0.12em; color: var(--paper); text-decoration: none; }
-  .logo em { font-style: italic; color: var(--warm); }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
-  .nav-links a { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--paper); text-decoration: none; opacity: 0.7; }
+/* ─── CURSOR (fine pointer / desktop only) ───── */
+#cur,#cur-ring{display:none}
+@media(pointer:fine){
+body{cursor:none}
+#cur{display:block;position:fixed;width:8px;height:8px;background:var(–gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s}
+#cur-ring{display:block;position:fixed;width:32px;height:32px;border:1px solid rgba(200,169,126,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .35s var(–ease),height .35s var(–ease),border-color .3s}
+body.cur-hover #cur{width:5px;height:5px}
+body.cur-hover #cur-ring{width:52px;height:52px;border-color:rgba(200,169,126,.7)}
+a,button,.calc-opt,.thumb{cursor:none}
+}
 
-  /* Hero */
-  .hero { min-height: 100vh; display: grid; grid-template-columns: 1.2fr 0.8fr; position: relative; overflow: hidden; }
-  .hero-left { display: flex; flex-direction: column; justify-content: flex-end; padding: 8rem 3rem 5rem; z-index: 2; }
-  .hero-title { font-family: var(--serif); font-size: clamp(3.5rem, 6vw, 6rem); font-weight: 300; line-height: 1.05; margin-bottom: 2rem; }
-  .hero-title em { font-style: italic; color: var(--warm); }
-  .hero-right { position: relative; width: 100%; height: 100vh; }
-  .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
+/* ─── LOADER ────────────────────────────────── */
+#loader{position:fixed;inset:0;z-index:8000;background:var(–ink);display:flex;align-items:center;justify-content:center;transition:opacity .7s var(–ease),visibility .7s}
+#loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{font-family:var(–serif);font-size:2rem;letter-spacing:.15em;color:var(–paper);margin-bottom:1.5rem;text-align:center}
+.ld-logo em{font-style:italic;color:var(–gold)}
+.ld-bar{width:100px;height:1px;background:rgba(200,169,126,.15);margin:0 auto;overflow:hidden}
+.ld-fill{height:100%;background:var(–gold);animation:ldFill 1.4s var(–ease) forwards}
+@keyframes ldFill{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
 
-  /* Slider Section */
-  .slider-section { height: 90vh; background: #000; position: relative; overflow: hidden; }
-  .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1); will-change: transform; }
-  .slide { flex: 0 0 100%; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #000; }
-  .slide img { max-width: 90vw; max-height: 80vh; object-fit: contain; pointer-events: none; user-select: none; }
-  
-  .slider-nav { position: absolute; width: 100%; top: 50%; left: 0; transform: translateY(-50%); display: flex; justify-content: space-between; padding: 0 3rem; pointer-events: none; z-index: 100; }
-  .s-btn { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid var(--warm); color: var(--warm); width: 60px; height: 60px; border-radius: 50%; pointer-events: auto; cursor: none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: 0.3s; }
-  .s-btn:hover { background: var(--warm); color: var(--ink); }
+/* ─── NAV ───────────────────────────────────── */
+nav{
+position:fixed;top:0;left:0;right:0;z-index:600;
+padding:1.4rem 1.25rem;
+display:flex;justify-content:space-between;align-items:center;
+transition:background .4s,padding .3s,border-color .4s;
+border-bottom:1px solid transparent;
+}
+nav.scrolled{background:rgba(8,7,6,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-color:rgba(200,169,126,.1)}
+.logo{font-family:var(–serif);font-size:1.3rem;letter-spacing:.13em;color:var(–paper);text-decoration:none;font-weight:300}
+.logo em{font-style:italic;color:var(–gold)}
+.nav-desktop{display:none;align-items:center;gap:2.5rem}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:300;color:var(–paper);text-decoration:none;opacity:.6;transition:opacity .3s}
+.nav-links a:hover{opacity:1}
+.nav-cta{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:300;color:var(–gold);text-decoration:none;border:1px solid rgba(200,169,126,.35);padding:.5rem 1.1rem;transition:background .3s,color .3s,border-color .3s;white-space:nowrap}
+.nav-cta:hover{background:var(–gold);color:var(–ink);border-color:var(–gold)}
 
-  /* Booking UI */
-  .booking-section { padding: 8rem 3rem; border-top: 1px solid rgba(200,169,126,0.12); }
-  .price-calc-wrap { background: rgba(200,169,126,0.03); border: 1px solid rgba(200,169,126,0.1); padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-  .selector-group { display: flex; flex-direction: column; gap: 1.5rem; }
-  .selector-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--warm); margin-bottom: 0.5rem; display: block;}
-  .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .calc-option { padding: 1rem; border: 1px solid rgba(200,169,126,0.2); font-size: 0.8rem; transition: 0.3s; cursor: none; text-align: center; }
-  .calc-option.active { border-color: var(--warm); background: rgba(200,169,126,0.1); color: var(--warm); }
-  .est-price-box { border-left: 1px solid rgba(200,169,126,0.1); padding-left: 3rem; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .est-value { font-family: var(--serif); font-size: 5rem; line-height: 1; }
-  .fg input, .fg textarea { background: transparent; border: none; border-bottom: 1px solid rgba(200,169,126,0.25); color: var(--paper); padding: 0.75rem 0; outline: none; width: 100%; font-family: var(--sans); }
-  .bsubmit { background: var(--warm); color: var(--ink); border: none; padding: 1.2rem; cursor: none; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; width: 100%; transition: 0.3s; margin-top: 2rem; }
-  .reveal { opacity:0; transform:translateY(30px); transition: 0.9s ease-out; }
-  .reveal.visible { opacity:1; transform:translateY(0); }
+/* Hamburger — mobile only */
+.ham{
+display:flex;flex-direction:column;justify-content:center;gap:5px;
+width:40px;height:40px;padding:8px;
+-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.ham span{display:block;height:1px;background:var(–paper);transition:transform .4s var(–ease),opacity .3s,width .3s}
+.ham span:nth-child(2){width:55%;align-self:flex-end}
+.ham.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* Mobile overlay menu */
+.mob-menu{
+position:fixed;inset:0;z-index:590;
+background:rgba(8,7,6,.97);
+display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2.2rem;
+opacity:0;visibility:hidden;transition:opacity .4s var(–ease),visibility .4s;
+padding:2rem;
+}
+.mob-menu.open{opacity:1;visibility:visible}
+.mob-menu a{font-family:var(–serif);font-size:clamp(2rem,8vw,2.8rem);font-weight:300;color:var(–paper);text-decoration:none;letter-spacing:.05em;transition:color .3s;-webkit-tap-highlight-color:transparent}
+.mob-menu a:active{color:var(–gold)}
+.mob-menu .mob-cta{font-family:var(–sans);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;font-weight:300;color:var(–gold);border:1px solid rgba(200,169,126,.35);padding:.85rem 2.2rem;margin-top:.5rem}
+.mob-menu .mob-ig{font-family:var(–sans);font-size:.62rem;letter-spacing:.12em;color:var(–muted);font-weight:300}
+
+@media(min-width:768px){
+nav{padding:1.6rem 2rem}
+nav.scrolled{padding:1rem 2rem}
+.nav-desktop{display:flex}
+.ham{display:none}
+}
+@media(min-width:1100px){
+nav{padding:1.6rem 3rem}
+nav.scrolled{padding:1rem 3rem}
+}
+
+/* ─── HERO ──────────────────────────────────── */
+/* MOBILE: full-bleed image, text floats over it */
+.hero{position:relative;min-height:100svh;overflow:hidden;display:flex;flex-direction:column}
+.hero-bg-text{position:absolute;bottom:-1rem;left:-.5rem;font-family:var(–serif);font-size:40vw;font-weight:300;line-height:1;color:rgba(200,169,126,.04);pointer-events:none;z-index:0;white-space:nowrap}
+.hero-img-bg{position:absolute;inset:0;z-index:1}
+.hero-img-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.5) contrast(1.05);transform:scale(1.06);animation:zoomIn 2.2s .2s var(–ease) forwards}
+.hero-img-bg::after{content:’’;position:absolute;inset:0;background:linear-gradient(to top,rgba(8,7,6,.96) 0%,rgba(8,7,6,.25) 65%,transparent 100%)}
+.hero-content{position:relative;z-index:2;margin-top:auto;padding:6rem 1.25rem 3rem}
+.hero-eyebrow{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;font-weight:300;color:var(–gold);margin-bottom:1.2rem;opacity:0;animation:aUp .9s .3s forwards}
+.hero-title{font-family:var(–serif);font-size:clamp(2.8rem,12vw,6.5rem);font-weight:300;line-height:1.03;margin-bottom:1.5rem;opacity:0;animation:aUp .9s .5s forwards}
+.hero-title em{font-style:italic;color:var(–gold)}
+.hero-desc{font-size:.8rem;font-weight:200;line-height:1.9;color:var(–muted);max-width:280px;margin-bottom:1.8rem;opacity:0;animation:aUp .9s .7s forwards}
+.hero-handle{display:inline-flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:300;color:var(–gold);letter-spacing:.08em;text-decoration:none;margin-bottom:2rem;opacity:0;animation:aUp .9s .85s forwards}
+.hero-handle svg{width:14px;height:14px;stroke:var(–gold);fill:none;stroke-width:1.5}
+.hero-cta{display:inline-flex;align-items:center;gap:.8rem;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;font-weight:300;color:var(–paper);text-decoration:none;opacity:0;animation:aUp .9s 1s forwards}
+.hero-cta::after{content:’’;display:block;width:32px;height:1px;background:var(–gold);transition:width .5s var(–ease)}
+.hero-cta:hover::after{width:56px}
+
+/* DESKTOP: split layout */
+@media(min-width:768px){
+.hero{flex-direction:row;min-height:100vh}
+.hero-img-bg{position:relative;flex:0 0 45%;z-index:1}
+.hero-img-bg::after{background:linear-gradient(90deg,var(–ink) 0%,transparent 50%)}
+.hero-content{flex:1;margin-top:0;display:flex;flex-direction:column;justify-content:flex-end;padding:8rem 2rem 5rem;z-index:2}
+.hero-bg-text{font-size:22vw;bottom:-2rem;left:-1rem}
+}
+@media(min-width:1100px){
+.hero-content{padding:8rem 3rem 5rem}
+.hero-img-bg{flex:0 0 42%}
+}
+
+/* ─── MARQUEE ───────────────────────────────── */
+.marquee-wrap{overflow:hidden;border-top:1px solid rgba(200,169,126,.15);border-bottom:1px solid rgba(200,169,126,.15);padding:.85rem 0;background:rgba(200,169,126,.02)}
+.marquee-track{display:flex;gap:3rem;white-space:nowrap;animation:marquee 22s linear infinite}
+.m-item{font-family:var(–serif);font-style:italic;font-size:.95rem;font-weight:300;color:var(–muted);flex-shrink:0}
+.m-dot{color:var(–gold);font-style:normal}
+
+/* ─── GALLERY SLIDER ────────────────────────── */
+.gallery-section{position:relative;background:#000;overflow:hidden}
+.gallery-header{position:absolute;top:0;left:0;right:0;z-index:20;padding:1.25rem;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,.65) 0%,transparent 100%)}
+.gallery-label{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;font-weight:300;color:var(–gold)}
+.slide-counter{font-family:var(–serif);font-size:.95rem;font-weight:300;color:rgba(200,169,126,.5)}
+.slide-counter span{color:var(–gold)}
+.slider-track{display:flex;height:70vw;min-height:260px;max-height:600px;transition:transform .9s var(–ease);will-change:transform}
+.slide{flex:0 0 100%;width:100%;overflow:hidden}
+.slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);transition:transform .9s var(–ease);filter:brightness(.85) contrast(1.05)}
+.slide.active img{transform:scale(1)}
+.slider-progress{position:absolute;bottom:0;left:0;right:0;z-index:20;height:2px;background:rgba(200,169,126,.1)}
+.slider-progress-fill{height:100%;background:var(–gold);transition:width .1s linear;width:0%}
+
+/* Mobile nav: tap areas at left/right edges */
+.s-nav{position:absolute;bottom:1.2rem;right:1.2rem;z-index:20;display:flex;gap:.6rem}
+.s-btn{width:44px;height:44px;border-radius:50%;background:rgba(200,169,126,.1);border:1px solid rgba(200,169,126,.3);color:var(–gold);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.s-btn:active{background:var(–gold);color:var(–ink)}
+@media(pointer:fine){
+.s-btn:hover{background:var(–gold);color:var(–ink)}
+}
+
+/* Thumbnail strip — hidden on small mobile, shown md+ */
+.thumb-strip{display:none}
+@media(min-width:600px){
+.thumb-strip{display:flex;gap:3px;height:60px;background:#000;padding:0 1.25rem;border-top:1px solid rgba(200,169,126,.07);overflow:hidden}
+.thumb{flex:0 0 60px;height:60px;overflow:hidden;opacity:.3;transition:opacity .3s,flex-basis .3s;-webkit-tap-highlight-color:transparent}
+.thumb img{width:100%;height:100%;object-fit:cover;filter:grayscale(.4)}
+.thumb.active{opacity:1;flex-basis:88px}
+}
+@media(min-width:768px){
+.gallery-header{padding:2rem 2rem}
+.slider-track{height:85vh;max-height:none}
+.thumb-strip{height:70px;padding:0 2rem}
+.thumb{flex:0 0 70px;height:70px}
+.thumb.active{flex-basis:100px}
+.s-btn{width:50px;height:50px;font-size:1.2rem}
+.s-nav{bottom:2rem;right:2rem;gap:.8rem}
+}
+@media(min-width:1100px){
+.gallery-header{padding:2rem 3rem}
+.thumb-strip{padding:0 3rem}
+.slider-track{height:90vh}
+}
+
+/* ─── BOOKING ───────────────────────────────── */
+.booking-section{padding:4rem 1.25rem;position:relative;overflow:hidden}
+.booking-section::before{content:‘BOOK’;position:absolute;right:-2rem;top:50%;transform:translateY(-50%);font-family:var(–serif);font-size:28vw;font-weight:300;line-height:1;color:rgba(200,169,126,.025);pointer-events:none;white-space:nowrap}
+.s-head{margin-bottom:2.5rem}
+.s-label{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;font-weight:300;color:var(–gold);margin-bottom:.7rem}
+.s-title{font-family:var(–serif);font-size:clamp(1.8rem,7vw,3rem);font-weight:300;line-height:1.1}
+
+/* Calc — single col mobile, two col desktop */
+.calc-shell{border:1px solid rgba(200,169,126,.1);background:rgba(200,169,126,.02);margin-bottom:3rem;display:flex;flex-direction:column}
+.calc-left{padding:1.5rem}
+.calc-right{border-top:1px solid rgba(200,169,126,.1);padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;text-align:center;background:rgba(200,169,126,.03);position:relative}
+.calc-right::before{content:’’;position:absolute;width:160px;height:160px;border-radius:50%;border:1px solid rgba(200,169,126,.07);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+
+.calc-group{margin-bottom:2rem}
+.calc-group:last-child{margin-bottom:0}
+.calc-group-label{font-size:.56rem;letter-spacing:.25em;text-transform:uppercase;font-weight:300;color:var(–gold);margin-bottom:.9rem;display:block}
+.opt-row{display:flex;flex-wrap:wrap;gap:7px}
+.calc-opt{
+padding:.6rem 1rem;border:1px solid rgba(200,169,126,.18);
+font-size:.72rem;font-weight:300;color:var(–muted);
+transition:border-color .25s,color .25s,background .25s;
+letter-spacing:.03em;position:relative;overflow:hidden;
+-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.calc-opt::before{content:’’;position:absolute;inset:0;background:var(–gold);transform:scaleX(0);transform-origin:left;transition:transform .35s var(–ease);z-index:0}
+.calc-opt span{position:relative;z-index:1}
+.calc-opt.active{border-color:var(–gold);color:var(–ink)}
+.calc-opt.active::before{transform:scaleX(1)}
+
+.price-eyebrow{font-size:.54rem;letter-spacing:.25em;text-transform:uppercase;font-weight:300;color:var(–gold);margin-bottom:.6rem;display:block}
+.price-value{font-family:var(–serif);font-size:4rem;font-weight:300;line-height:1;color:var(–paper);transition:opacity .3s,transform .35s var(–ease)}
+.price-sub{font-size:.62rem;font-weight:200;color:var(–muted);margin-top:.5rem;line-height:1.7}
+.price-asterisk{font-size:.56rem;font-weight:200;color:var(–muted2);margin-top:1.2rem;line-height:1.8;max-width:200px;text-align:center}
+
+@media(min-width:640px){
+.calc-shell{flex-direction:row}
+.calc-left{flex:1;padding:2.5rem}
+.calc-right{flex:0 0 240px;border-top:none;border-left:1px solid rgba(200,169,126,.1);padding:2.5rem 1.5rem}
+}
+@media(min-width:1100px){
+.calc-left{padding:3rem}
+.calc-right{flex:0 0 280px}
+.price-value{font-size:4.5rem}
+}
+
+/* Booking body — single col mobile */
+.booking-body{display:flex;flex-direction:column;gap:3rem}
+
+.booking-form-title{font-family:var(–serif);font-size:clamp(1.5rem,5vw,2rem);font-weight:300;margin-bottom:.3rem}
+.booking-form-title em{font-style:italic;color:var(–gold)}
+.booking-pkg-echo{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:300;color:var(–gold);min-height:1em;margin-bottom:1.8rem}
+
+.bform{display:flex;flex-direction:column;gap:1.3rem}
+.form-row{display:flex;flex-direction:column;gap:1.3rem}
+.fg{display:flex;flex-direction:column;gap:.45rem}
+.fg label{font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;font-weight:300;color:var(–gold)}
+.fg input,.fg select,.fg textarea{background:transparent;border:none;border-bottom:1px solid rgba(200,169,126,.2);color:var(–paper);font-family:var(–sans);font-size:.9rem;font-weight:200;padding:.8rem 0;outline:none;transition:border-color .3s;width:100%;-webkit-appearance:none;color-scheme:dark;border-radius:0}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(–gold)}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(132,124,114,.38)}
+.fg textarea{resize:none;height:80px}
+.fg select option{background:#181614;color:var(–paper)}
+.fg input[type=“date”]::-webkit-calendar-picker-indicator{filter:invert(.45) sepia(.6);cursor:pointer}
+
+.bsubmit{
+margin-top:.5rem;
+display:inline-flex;align-items:center;gap:.9rem;width:100%;justify-content:center;
+background:var(–gold);border:1px solid var(–gold);
+color:var(–ink);font-family:var(–sans);
+font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;font-weight:400;
+padding:1.1rem 2rem;
+transition:background .3s,color .3s;
+-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.bsubmit:active{background:transparent;color:var(–gold)}
+@media(pointer:fine){
+.bsubmit:hover{background:transparent;color:var(–gold)}
+.bsubmit{width:auto;justify-content:flex-start}
+}
+.bsubmit::after{content:‘→’}
+
+.bconfirm{display:none;padding:2.5rem 1.5rem;border:1px solid rgba(200,169,126,.15);background:rgba(200,169,126,.04);text-align:center}
+.bconfirm.show{display:block}
+.bconfirm-icon{font-size:1.8rem;margin-bottom:1rem}
+.bconfirm-title{font-family:var(–serif);font-size:1.8rem;font-weight:300;margin-bottom:.8rem}
+.bconfirm-title em{font-style:italic;color:var(–gold)}
+.bconfirm-sub{font-size:.78rem;font-weight:200;color:var(–muted);line-height:1.9;max-width:300px;margin:0 auto}
+
+.social-strip{display:flex;align-items:center;flex-wrap:wrap;gap:1rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(200,169,126,.1)}
+.ig-pill{display:inline-flex;align-items:center;gap:.5rem;font-size:.68rem;font-weight:300;color:var(–gold);text-decoration:none;border:1px solid rgba(200,169,126,.25);padding:.6rem 1.1rem;transition:background .3s,color .3s;-webkit-tap-highlight-color:transparent}
+.ig-pill svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5}
+.ig-pill:active{background:var(–gold);color:var(–ink)}
+@media(pointer:fine){.ig-pill:hover{background:var(–gold);color:var(–ink)}}
+.social-note{font-size:.7rem;font-weight:200;color:var(–muted)}
+
+/* Policy panel */
+.policy-head{font-family:var(–serif);font-size:clamp(1.5rem,5vw,2rem);font-weight:300;margin-bottom:1rem;line-height:1.2}
+.policy-head em{font-style:italic;color:var(–gold)}
+.policy-tagline{font-size:.78rem;font-weight:200;color:var(–muted);line-height:1.9;margin-bottom:2rem}
+.policy-items{border-top:1px solid rgba(200,169,126,.1)}
+.policy-item{display:grid;grid-template-columns:36px 1fr;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(200,169,126,.07);align-items:start}
+.policy-num{font-family:var(–serif);font-size:1.3rem;font-weight:300;color:rgba(200,169,126,.28);line-height:1.2}
+.policy-text strong{display:block;font-size:.76rem;font-weight:300;color:var(–paper);margin-bottom:.2rem}
+.policy-text span{font-size:.7rem;font-weight:200;color:var(–muted);line-height:1.7}
+
+@media(min-width:768px){
+.booking-section{padding:6rem 2rem}
+.form-row{flex-direction:row}
+.booking-body{flex-direction:row;gap:5rem;align-items:start}
+.booking-body>*{flex:1}
+}
+@media(min-width:1100px){
+.booking-section{padding:7rem 3rem}
+.booking-body{gap:6rem}
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+footer{
+padding:1.8rem 1.25rem;
+border-top:1px solid rgba(200,169,126,.1);
+display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;
+}
+.footer-logo{font-family:var(–serif);font-size:.95rem;font-weight:300;letter-spacing:.1em;color:var(–muted);text-decoration:none}
+.footer-copy{font-size:.58rem;font-weight:200;color:rgba(132,124,114,.4);letter-spacing:.05em}
+.footer-socials{display:flex;gap:1.5rem}
+.footer-socials a{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;font-weight:300;color:var(–muted);text-decoration:none;transition:color .3s}
+.footer-socials a:active,.footer-socials a:hover{color:var(–gold)}
+@media(min-width:640px){
+footer{flex-direction:row;justify-content:space-between;text-align:left;padding:2rem 2rem}
+}
+@media(min-width:1100px){footer{padding:2rem 3rem}}
+
+/* ─── ANIMATIONS ─────────────────────────────── */
+@keyframes aUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes aFade{to{opacity:1}}
+@keyframes zoomIn{from{transform:scale(1.07)}to{transform:scale(1)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .9s var(–ease),transform .9s var(–ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
 </style>
+
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div id="loader"><div><div class="ld-logo">Dan<em>iik</em></div><div class="ld-bar"><div class="ld-fill"></div></div></div></div>
 
-<nav>
+<div id="cur"></div><div id="cur-ring"></div>
+
+<!-- NAV -->
+
+<nav id="nav">
   <a href="#" class="logo">Dan<em>iik</em></a>
-  <ul class="nav-links">
-    <li><a href="#work">Work</a></li>
-    <li><a href="#booking" style="color: var(--warm); border: 1px solid var(--warm); padding: 0.5rem 1rem;">Book Session</a></li>
-  </ul>
+  <!-- Desktop links -->
+  <div class="nav-desktop">
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#booking">Pricing</a></li>
+    </ul>
+    <a href="#booking" class="nav-cta">Book a Session</a>
+  </div>
+  <!-- Hamburger -->
+  <button class="ham" id="ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
-<section class="hero">
-  <div class="hero-left">
-    <h1 class="hero-title">Capturing<br>moments<br>that <em>breathe</em></h1>
-    <p style="color: var(--muted); letter-spacing: 2px; font-size: 0.7rem; text-transform: uppercase;">Fine Art & Editorial Photography</p>
+<!-- Mobile menu overlay -->
+
+<div class="mob-menu" id="mobMenu">
+  <a href="#work" class="mob-link">Work</a>
+  <a href="#booking" class="mob-link">Pricing</a>
+  <a href="#booking" class="mob-cta mob-link">Book a Session</a>
+  <a href="https://instagram.com/daniik_photo" target="_blank" rel="noopener" class="mob-ig">@daniik_photo</a>
+</div>
+
+<!-- HERO -->
+
+<section class="hero" id="home">
+  <div class="hero-bg-text" aria-hidden="true">dk</div>
+  <div class="hero-img-bg">
+    <img src="images/IMG_4556.jpg" alt="" onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=900&q=80'">
   </div>
-  <div class="hero-right">
-    <img class="hero-img" src="images/IMG_4556.jpg" alt="Daniik Hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">@daniik_photo — Fine Art & Editorial</p>
+    <h1 class="hero-title">Capturing<br>moments<br>that <em>breathe</em></h1>
+    <p class="hero-desc">Sports, portraits, events — every frame a story worth keeping.</p>
+    <a href="https://instagram.com/daniik_photo" target="_blank" rel="noopener" class="hero-handle">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="#c8a97e" stroke="none"/></svg>
+      @daniik_photo
+    </a>
+    <a href="#work" class="hero-cta">View Portfolio</a>
   </div>
 </section>
 
-<section class="slider-section" id="work">
-  <div class="slider-nav">
-    <button class="s-btn" id="prevBtn">‹</button>
-    <button class="s-btn" id="nextBtn">›</button>
+<!-- MARQUEE -->
+
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="m-item">Sports <span class="m-dot">✦</span></span>
+    <span class="m-item">Portraits <span class="m-dot">✦</span></span>
+    <span class="m-item">Editorial <span class="m-dot">✦</span></span>
+    <span class="m-item">Events <span class="m-dot">✦</span></span>
+    <span class="m-item">Fine Art <span class="m-dot">✦</span></span>
+    <span class="m-item">@daniik_photo <span class="m-dot">✦</span></span>
+    <span class="m-item">Sports <span class="m-dot">✦</span></span>
+    <span class="m-item">Portraits <span class="m-dot">✦</span></span>
+    <span class="m-item">Editorial <span class="m-dot">✦</span></span>
+    <span class="m-item">Events <span class="m-dot">✦</span></span>
+    <span class="m-item">Fine Art <span class="m-dot">✦</span></span>
+    <span class="m-item">@daniik_photo <span class="m-dot">✦</span></span>
   </div>
-  <div class="slider-track" id="sliderTrack"></div>
+</div>
+
+<!-- GALLERY -->
+
+<section class="gallery-section" id="work">
+  <div class="gallery-header">
+    <p class="gallery-label">Selected Work</p>
+    <div class="slide-counter"><span id="curSlide">01</span> / <span id="totSlide">15</span></div>
+  </div>
+  <div id="sliderTrack" class="slider-track"></div>
+  <div class="s-nav">
+    <button class="s-btn" id="prevBtn" aria-label="Previous">&#8592;</button>
+    <button class="s-btn" id="nextBtn" aria-label="Next">&#8594;</button>
+  </div>
+  <div class="slider-progress"><div class="slider-progress-fill" id="progressFill"></div></div>
+  <div class="thumb-strip" id="thumbStrip"></div>
 </section>
+
+<!-- BOOKING -->
 
 <section class="booking-section" id="booking">
-  <div class="price-calc-wrap reveal">
-    <div class="selector
+  <div class="s-head reveal">
+    <p class="s-label">Book a Session</p>
+    <h2 class="s-title">Let's make something<br><em style="font-style:italic;color:var(--gold)">real</em> together</h2>
+  </div>
+
+  <!-- PRICE CALCULATOR -->
+
+  <div class="calc-shell reveal">
+    <div class="calc-left">
+      <div class="calc-group">
+        <span class="calc-group-label">01 — Session Type</span>
+        <div class="opt-row">
+          <div class="calc-opt type-opt active" data-value="Sports"><span>Sports</span></div>
+          <div class="calc-opt type-opt" data-value="Portraits"><span>Portraits</span></div>
+          <div class="calc-opt type-opt" data-value="Events / Social"><span>Events / Social</span></div>
+        </div>
+      </div>
+      <div class="calc-group">
+        <span class="calc-group-label">02 — Duration</span>
+        <div class="opt-row">
+          <div class="calc-opt time-opt active" data-time="0–45 min" data-base="15"><span>0–45 min</span></div>
+          <div class="calc-opt time-opt" data-time="45 min–1:15 hr" data-base="30"><span>45 min–1:15 hr</span></div>
+          <div class="calc-opt time-opt" data-time="1:15 hr–2 hr" data-base="45"><span>1:15–2 hr</span></div>
+          <div class="calc-opt time-opt" data-time="2 hr+" data-base="55"><span>2 hr+</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="calc-right">
+      <span class="price-eyebrow">Estimated Price</span>
+      <div class="price-value" id="displayPrice">$15</div>
+      <p class="price-sub">Starting rate<br>Final quote may vary</p>
+      <p class="price-asterisk">Select type and duration to get an instant estimate</p>
+    </div>
+  </div>
+
+  <!-- FORM + POLICY -->
+
+  <div class="booking-body">
+    <div class="reveal">
+      <h3 class="booking-form-title">Request a <em>booking</em></h3>
+      <p class="booking-pkg-echo" id="pkgEcho">Select a type and duration above</p>
+      <form action="https://formspree.io/f/mlgalbve" method="POST" class="bform" id="bform">
+        <input type="hidden" name="event_type" id="inputEventType" value="Sports">
+        <input type="hidden" name="duration" id="inputDuration" value="0–45 min">
+        <input type="hidden" name="quoted_price" id="inputPrice" value="$15">
+        <div class="form-row">
+          <div class="fg"><label>First Name</label><input type="text" name="fname" placeholder="First name" required autocomplete="given-name"></div>
+          <div class="fg"><label>Last Name</label><input type="text" name="lname" placeholder="Last name" required autocomplete="family-name"></div>
+        </div>
+        <div class="fg"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required autocomplete="email"></div>
+        <div class="fg"><label>Instagram (optional)</label><input type="text" name="instagram" placeholder="@yourhandle"></div>
+        <div class="form-row">
+          <div class="fg"><label>Preferred Date</label><input type="date" name="date" id="bdate"></div>
+          <div class="fg"><label>Preferred Time</label>
+            <select name="time">
+              <option value="" disabled selected>Select time</option>
+              <option>Early Morning (6–8 AM)</option>
+              <option>Morning (9–11 AM)</option>
+              <option>Midday (12–2 PM)</option>
+              <option>Afternoon (3–5 PM)</option>
+              <option>Golden Hour (5–7 PM)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Location / Venue</label><input type="text" name="location" placeholder="Where are you shooting?"></div>
+        <div class="fg"><label>Details & Vision</label><textarea name="message" placeholder="Tell me about the shoot — vibe, references, anything helpful..." required></textarea></div>
+        <button type="submit" class="bsubmit">Send Booking Request</button>
+      </form>
+      <div class="bconfirm" id="bconfirm">
+        <div class="bconfirm-icon">✦</div>
+        <h3 class="bconfirm-title">Request <em>received</em></h3>
+        <p class="bconfirm-sub">You'll hear back within 24 hours. Follow <strong style="color:var(--gold);font-weight:300">@daniik_photo</strong> for behind-the-scenes while you wait.</p>
+      </div>
+      <div class="social-strip">
+        <a href="https://instagram.com/daniik_photo" target="_blank" rel="noopener" class="ig-pill">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg>
+          Follow @daniik_photo
+        </a>
+        <span class="social-note">Behind the scenes & latest work</span>
+      </div>
+    </div>
+
+```
+<div class="reveal">
+  <h3 class="policy-head">What you <em>get</em></h3>
+  <p class="policy-tagline">Every session is a collaboration. Here's how it works from booking to gallery delivery.</p>
+  <div class="policy-items">
+    <div class="policy-item"><div class="policy-num">01</div><div class="policy-text"><strong>Professional Editing Included</strong><span>Every image fully edited to Daniik's signature style. No raw files, just the good stuff.</span></div></div>
+    <div class="policy-item"><div class="policy-num">02</div><div class="policy-text"><strong>3–7 Day Gallery Turnaround</strong><span>Delivered via private online gallery. Rush delivery available on request.</span></div></div>
+    <div class="policy-item"><div class="policy-num">03</div><div class="policy-text"><strong>25% Deposit to Confirm</strong><span>A deposit holds your date. Balance due 72 hours before the session.</span></div></div>
+    <div class="policy-item"><div class="policy-num">04</div><div class="policy-text"><strong>Weather Reschedule Policy</strong><span>If weather ruins the shoot, we reschedule for free. No stress, no charges.</span></div></div>
+    <div class="policy-item"><div class="policy-num">05</div><div class="policy-text"><strong>Print Release Included</strong><span>You own your images. Use them for personal projects, social, and more.</span></div></div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <a href="#" class="footer-logo">Daniik Photography</a>
+  <p class="footer-copy">&copy; 2025 Daniik — All rights reserved</p>
+  <div class="footer-socials">
+    <a href="https://instagram.com/daniik_photo" target="_blank" rel="noopener">Instagram</a>
+    <a href="#">Vsco</a>
+  </div>
+</footer>
+
+<script>
+/* ── IMAGES ── */
+const allImages = [
+  "images/IMG_4529.jpg","images/IMG_4650.jpg","images/IMG_4668.jpg","images/IMG_4728.jpg",
+  "images/IMG_4853.jpg","images/IMG_4860.jpg","images/IMG_5411.jpg","images/IMG_5415.jpg",
+  "images/IMG_5418.jpg","images/IMG_5439.jpg","images/IMG_5479.jpg","images/IMG_5485.jpg",
+  "images/IMG_5515.jpg","images/IMG_5583.jpg","images/IMG_5595.jpg","images/IMG_5623.jpg",
+  "images/IMG_5668.jpg","images/IMG_5747.jpg","images/IMG_5748.jpg","images/IMG_5831.jpg",
+  "images/IMG_5864.jpg","images/IMG_5897.jpg","images/IMG_6032.jpg","images/IMG_6040.jpg"
+];
+const MAX = 15;
+
+/* ── LOADER ── */
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('out'), 1500));
+
+/* ── CURSOR (desktop only) ── */
+const cur = document.getElementById('cur'), ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+if(window.matchMedia('(pointer:fine)').matches){
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+  (function anim(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(anim); })();
+  document.querySelectorAll('a,button,.calc-opt,.thumb').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
+  });
+}
+
+/* ── NAV SCROLL ── */
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 50), {passive:true});
+
+/* ── HAMBURGER ── */
+const ham = document.getElementById('ham');
+const mobMenu = document.getElementById('mobMenu');
+ham.addEventListener('click', () => {
+  const open = ham.classList.toggle('open');
+  mobMenu.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+mobMenu.querySelectorAll('.mob-link').forEach(link => {
+  link.addEventListener('click', () => {
+    ham.classList.remove('open');
+    mobMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+/* ── SLIDER ── */
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+const track = document.getElementById('sliderTrack');
+const thumbStrip = document.getElementById('thumbStrip');
+const images = shuffle(allImages).slice(0, MAX);
+let idx = 0, autoTimer, progTimer, progVal = 0;
+const INTERVAL = 4500;
+
+document.getElementById('totSlide').textContent = String(images.length).padStart(2,'0');
+
+images.forEach((src, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide' + (i===0?' active':'');
+  slide.innerHTML = `<img src="${src}" loading="${i<2?'eager':'lazy'}" alt="Daniik photo ${i+1}">`;
+  track.appendChild(slide);
+
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb' + (i===0?' active':'');
+  thumb.innerHTML = `<img src="${src}" loading="lazy" alt="">`;
+  thumb.addEventListener('click', () => goTo(i));
+  thumbStrip.appendChild(thumb);
+});
+
+function goTo(n){
+  document.querySelectorAll('.slide')[idx].classList.remove('active');
+  document.querySelectorAll('.thumb')[idx].classList.remove('active');
+  idx = ((n % images.length) + images.length) % images.length;
+  document.querySelectorAll('.slide')[idx].classList.add('active');
+  const thumbs = document.querySelectorAll('.thumb');
+  thumbs[idx].classList.add('active');
+  track.style.transform = `translateX(-${idx*100}%)`;
+  document.getElementById('curSlide').textContent = String(idx+1).padStart(2,'0');
+  thumbs[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  resetProg();
+}
+
+function resetProg(){
+  clearInterval(progTimer); progVal=0;
+  document.getElementById('progressFill').style.width='0%';
+  progTimer = setInterval(()=>{ progVal+=100/(INTERVAL/100); if(progVal>=100)progVal=100; document.getElementById('progressFill').style.width=progVal+'%'; },100);
+}
+
+function startAuto(){ autoTimer=setInterval(()=>goTo(idx+1),INTERVAL); }
+function stopAuto(){ clearInterval(autoTimer); }
+startAuto(); resetProg();
+
+document.getElementById('nextBtn').addEventListener('click',()=>{stopAuto();goTo(idx+1);startAuto();});
+document.getElementById('prevBtn').addEventListener('click',()=>{stopAuto();goTo(idx-1);startAuto();});
+
+const gs = document.querySelector('.gallery-section');
+gs.addEventListener('mouseenter',stopAuto);
+gs.addEventListener('mouseleave',()=>{startAuto();resetProg();});
+
+/* Touch swipe */
+let touchX=null;
+gs.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
+gs.addEventListener('touchend',e=>{
+  if(touchX===null)return;
+  const dx=touchX-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>40){stopAuto();dx>0?goTo(idx+1):goTo(idx-1);startAuto();}
+  touchX=null;
+},{passive:true});
+
+/* Keyboard */
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){stopAuto();goTo(idx+1);startAuto();}
+  if(e.key==='ArrowLeft'){stopAuto();goTo(idx-1);startAuto();}
+});
+
+/* ── PRICE CALCULATOR ── */
+const typeOpts = document.querySelectorAll('.type-opt');
+const timeOpts = document.querySelectorAll('.time-opt');
+const priceEl = document.getElementById('displayPrice');
+const pkgEcho = document.getElementById('pkgEcho');
+
+function calcPrice(){
+  const t = document.querySelector('.time-opt.active');
+  const ty = document.querySelector('.type-opt.active');
+  const price='$'+t.dataset.base;
+  priceEl.style.opacity='0'; priceEl.style.transform='translateY(6px)';
+  setTimeout(()=>{ priceEl.textContent=price; priceEl.style.transition='opacity .35s,transform .35s'; priceEl.style.opacity='1'; priceEl.style.transform='translateY(0)'; },160);
+  document.getElementById('inputPrice').value=price;
+  document.getElementById('inputEventType').value=ty.dataset.value;
+  document.getElementById('inputDuration').value=t.dataset.time;
+  pkgEcho.textContent=ty.dataset.value+' · '+t.dataset.time+' · '+price;
+}
+
+typeOpts.forEach(o=>o.addEventListener('click',()=>{typeOpts.forEach(x=>x.classList.remove('active'));o.classList.add('active');calcPrice();}));
+timeOpts.forEach(o=>o.addEventListener('click',()=>{timeOpts.forEach(x=>x.classList.remove('active'));o.classList.add('active');calcPrice();}));
+
+/* ── MIN DATE ── */
+const bdate=document.getElementById('bdate');
+if(bdate){const d=new Date();d.setDate(d.getDate()+2);bdate.min=d.toISOString().split('T')[0];}
+
+/* ── FORM SUBMIT (AJAX) ── */
+document.getElementById('bform').addEventListener('submit',function(e){
+  e.preventDefault();
+  const btn=this.querySelector('.bsubmit');
+  btn.textContent='Sending…';
+  fetch(this.action,{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}})
+    .then(r=>{
+      if(r.ok){this.style.display='none';document.getElementById('bconfirm').classList.add('show');}
+      else{btn.textContent='Error — try again';}
+    })
+    .catch(()=>{this.style.display='none';document.getElementById('bconfirm').classList.add('show');});
+});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),(e.target.dataset.delay||0));obs.unobserve(e.target);}});
+},{threshold:.07});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.dataset.delay=i%3*100;obs.observe(el);});
+</script>
+
+</body>
+</html>
