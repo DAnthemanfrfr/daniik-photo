@@ -813,10 +813,20 @@ footer{
 <button id="btt" aria-label="Back to top">&#8593;</button>
 
 <script>
+/* ── FORCE SCROLL TO TOP ON LOAD ── */
+// Prevents the browser from auto-scrolling to where the user was before they refreshed
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 /* ── BULLETPROOF LOADER INITIALIZATION ── */
 (function(){
   const ldr = document.getElementById('ldr');
-  const removeLoader = () => { if (ldr) ldr.classList.add('out'); };
+  const removeLoader = () => { 
+    if (ldr) ldr.classList.add('out'); 
+    window.scrollTo(0, 0); // Double safety net to ensure we are at the top when the loader hides
+  };
   // Wait for window to load...
   window.addEventListener('load', removeLoader);
   // ...but FORCE hide after 1.2s to prevent black screens no matter what
