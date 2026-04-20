@@ -32,27 +32,35 @@
   .hero-right { position: relative; width: 100%; height: 100vh; }
   .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
 
-  /* FINAL FIX: SLIDER ACCURACY */
-  .slider-section { padding: 2vh 0; background: #000; overflow: hidden; position: relative; }
+  /* ULTIMATE PRECISION SLIDER FIX */
+  .slider-section { 
+    height: 90vh; 
+    background: #000; 
+    position: relative; 
+    display: flex;
+    align-items: center;
+  }
   
   .slider-container { 
     display: flex; 
-    width: 100%;
-    height: 85vh;
-    overflow-x: scroll; 
+    width: 100vw;
+    height: 100%;
+    overflow-x: auto; 
     scroll-snap-type: x mandatory; 
     scrollbar-width: none; 
     scroll-behavior: smooth;
+    /* Removed all gap/padding to fix uneven shuffling */
+    gap: 0; 
     margin: 0;
     padding: 0;
   }
   .slider-container::-webkit-scrollbar { display: none; }
   
   .slide { 
-    flex: 0 0 100%; /* Fixes the width to exactly 100% of the screen */
+    flex: 0 0 100vw; /* Hard-lock width to exactly 1 screen width */
     width: 100vw;
     height: 100%; 
-    scroll-snap-align: start; 
+    scroll-snap-align: center; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,44 +68,37 @@
   }
   
   .slide img { 
-    max-width: 90%; /* Leaves a small margin so image doesn't hit screen edges */
-    max-height: 95%; 
+    max-width: 85vw; /* This prevents the "edge-to-edge" crowding */
+    max-height: 80vh; 
     object-fit: contain; 
     pointer-events: none;
   }
   
   .slider-nav { 
     position: absolute; 
-    top: 50%; 
-    left: 0;
-    right: 0;
-    transform: translateY(-50%); 
+    width: 100%; 
     display: flex; 
     justify-content: space-between; 
-    padding: 0 4rem; 
+    padding: 0 3rem; 
     pointer-events: none; 
-    z-index: 20; 
+    z-index: 50; 
   }
   
   .s-btn { 
-    background: rgba(245,241,235,0.05); 
-    backdrop-filter: blur(10px); 
+    background: rgba(14, 13, 12, 0.4); 
+    backdrop-filter: blur(15px); 
     border: 1px solid var(--warm); 
     color: var(--warm); 
-    width: 65px; 
-    height: 65px; 
+    width: 60px; height: 60px; 
     border-radius: 50%; 
     pointer-events: auto; 
     cursor: none; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 1.5rem; 
-    transition: 0.3s; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 1.5rem; transition: 0.3s; 
   }
   .s-btn:hover { background: var(--warm); color: var(--ink); }
 
-  /* Booking UI */
+  /* Pricing/Booking Section */
   .booking-section { padding: 8rem 3rem; border-top: 1px solid rgba(200,169,126,0.12); }
   .price-calc-wrap { background: rgba(200,169,126,0.03); border: 1px solid rgba(200,169,126,0.1); padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
   .selector-group { display: flex; flex-direction: column; gap: 1.5rem; }
@@ -220,36 +221,43 @@
 </section>
 
 <script>
+  // Mouse
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx=0,my=0,rx=0,ry=0;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
   (function anim(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
 
+  // Precision Logic
   const slider = document.getElementById('slider');
   let isPaused = false;
   
+  function getFullWidth() {
+    return window.innerWidth; // Always use viewport width for exact calculation
+  }
+
   function scrollNext() {
     if(!isPaused) {
-      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 10) {
+      if (slider.scrollLeft + slider.offsetWidth >= slider.scrollWidth - 5) {
         slider.scrollTo({left: 0, behavior: 'smooth'});
       } else {
-        slider.scrollBy({left: slider.offsetWidth, behavior: 'smooth'});
+        slider.scrollBy({left: getFullWidth(), behavior: 'smooth'});
       }
     }
   }
 
-  let timer = setInterval(scrollNext, 4000);
+  let timer = setInterval(scrollNext, 4500);
   slider.addEventListener('mouseenter', () => isPaused = true);
   slider.addEventListener('mouseleave', () => isPaused = false);
 
   document.getElementById('nextBtn').addEventListener('click', () => {
-    slider.scrollBy({left: slider.offsetWidth, behavior: 'smooth'});
+    slider.scrollBy({left: getFullWidth(), behavior: 'smooth'});
   });
   document.getElementById('prevBtn').addEventListener('click', () => {
-    slider.scrollBy({left: -slider.offsetWidth, behavior: 'smooth'});
+    slider.scrollBy({left: -getFullWidth(), behavior: 'smooth'});
   });
 
+  // Pricing
   const typeOpts = document.querySelectorAll('.type-opt');
   const timeOpts = document.querySelectorAll('.time-opt');
   function calculate() {
