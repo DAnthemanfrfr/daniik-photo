@@ -32,7 +32,7 @@ body{font-family:var(--sans);background:var(--ink);color:var(--paper);overflow-x
 img{display:block;max-width:100%;height:auto}
 button,input,textarea,select{font-family:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
 
-/* Fix iOS blue link color */
+/* Fix iOS blue link color — the main bug */
 a{color:inherit;text-decoration:none;-webkit-text-fill-color:inherit}
 
 /* ═══════════════════════════════════════════
@@ -58,32 +58,20 @@ body::before{
 }
 
 /* ═══════════════════════════════════════════
-   LOADER (BULLETPROOF & LONGER)
+   LOADER
 ═══════════════════════════════════════════ */
 #ldr{
-  position:fixed;inset:0;top:0;left:0;right:0;bottom:0;
-  z-index:99999;
-  background:#070605; /* Hardcoded safe color */
+  position:fixed;inset:0;z-index:8500;background:var(--ink);
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2rem;
-  transition:opacity .6s ease,visibility .6s;
+  transition:opacity .8s var(--ease),visibility .8s;
 }
 #ldr.out{opacity:0;visibility:hidden;pointer-events:none}
-.ldr-logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:2.4rem; /* Safe fallback */
-  font-size:clamp(1.8rem,6vw,2.8rem);
-  letter-spacing:.18em;font-weight:300;
-  color:#f0ebe3; /* Hardcoded safe color */
-  animation: ldrPulse 2s infinite ease-in-out;
-}
-.ldr-logo em{font-style:italic;color:#c8a97e}
-.ldr-line{width:80px;height:1px;background:rgba(200,169,126,.15);overflow:hidden}
-.ldr-fill{height:100%;background:linear-gradient(90deg,#9e7f58,#dfc49a);animation:ldrSlide 2.5s ease forwards} /* Extended to 2.5s */
-@keyframes ldrPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.ldr-logo{font-family:var(--serif);font-size:clamp(1.8rem,6vw,2.8rem);letter-spacing:.18em;font-weight:300;color:var(--paper);-webkit-text-fill-color:var(--paper)}
+.ldr-logo em{font-style:italic;color:var(--gold);-webkit-text-fill-color:var(--gold)}
+.ldr-line{width:80px;height:1px;background:rgba(200,169,126,.12);overflow:hidden}
+.ldr-fill{height:100%;background:linear-gradient(90deg,var(--gold-dk),var(--gold-lt));animation:ldrSlide 1.5s var(--ease) forwards}
 @keyframes ldrSlide{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
-</style>
-<noscript><style>#ldr{display:none !important;}</style></noscript>
-<style>
+
 /* ═══════════════════════════════════════════
    NAV
 ═══════════════════════════════════════════ */
@@ -98,6 +86,7 @@ nav{
 nav.scrolled{background:rgba(7,6,5,.93);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-color:rgba(200,169,126,.1)}
 nav.scrolled .nav-inner{padding:.9rem 1.25rem}
 
+/* Fix iOS blue — explicit color on all nav links */
 .logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.14em;font-weight:300;color:var(--paper) !important;-webkit-text-fill-color:var(--paper) !important;text-decoration:none;display:inline-block}
 .logo em{font-style:italic;color:var(--gold) !important;-webkit-text-fill-color:var(--gold) !important}
 
@@ -173,7 +162,7 @@ nav.scrolled .nav-inner{padding:.9rem 1.25rem}
 @keyframes ghostIn{from{opacity:0;transform:translateX(4%)}to{opacity:1;transform:translateX(0)}}
 
 /* Photo background */
-.hero-photo{position:absolute;inset:0;z-index:1; will-change: transform;}
+.hero-photo{position:absolute;inset:0;z-index:1}
 .hero-photo img{width:100%;height:100%;object-fit:cover;filter:brightness(.48) contrast(1.08) saturate(.88);transform:scale(1.07);animation:heroZoom 2.4s .1s var(--ease) forwards}
 @keyframes heroZoom{to{transform:scale(1)}}
 
@@ -246,6 +235,7 @@ nav.scrolled .nav-inner{padding:.9rem 1.25rem}
 .hero-scroll-fill{width:100%;height:100%;background:var(--gold);animation:scrollAnim 2s 2s infinite var(--ease)}
 @keyframes scrollAnim{0%{transform:scaleY(0) translateY(-100%);transform-origin:top}50%{transform:scaleY(1) translateY(0%);transform-origin:top}100%{transform:scaleY(0) translateY(100%);transform-origin:bottom}}
 
+/* Desktop hero: side-by-side */
 @media(min-width:768px){
   .hero{flex-direction:row}
   .hero-photo{position:relative;flex:0 0 46%;z-index:1}
@@ -544,7 +534,7 @@ nav.scrolled .nav-inner{padding:.9rem 1.25rem}
 }
 
 /* ═══════════════════════════════════════════
-   FOOTER & ADD-ONS
+   FOOTER
 ═══════════════════════════════════════════ */
 footer{
   border-top:1px solid rgba(200,169,126,.1);
@@ -562,19 +552,6 @@ footer{
 }
 @media(min-width:1100px){footer{padding:2rem 3rem}}
 
-/* ── BACK TO TOP BUTTON ── */
-#btt {
-  position: fixed; bottom: 2rem; right: 2rem; z-index: 600;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(7,6,5,.75); border: 1px solid rgba(200,169,126,.3);
-  color: var(--gold); -webkit-text-fill-color: var(--gold); font-size: 1.2rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; visibility: hidden; transform: translateY(20px);
-  transition: all .4s var(--ease); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-#btt.show { opacity: 1; visibility: visible; transform: translateY(0); }
-@media(pointer:fine) { #btt:hover { background: var(--gold); color: var(--ink); -webkit-text-fill-color: var(--ink); } }
-
 /* ═══════════════════════════════════════════
    SHARED ANIMATIONS
 ═══════════════════════════════════════════ */
@@ -589,13 +566,16 @@ footer{
 </head>
 <body>
 
+<!-- LOADER -->
 <div id="ldr">
   <div class="ldr-logo">Dan<em>iik</em></div>
   <div class="ldr-line"><div class="ldr-fill"></div></div>
 </div>
 
+<!-- CURSOR -->
 <div id="cur"></div><div id="cur-ring"></div>
 
+<!-- ══ NAV ══════════════════════════════════ -->
 <nav id="nav">
   <div class="nav-inner">
     <a href="#" class="logo">Dan<em>iik</em></a>
@@ -615,6 +595,7 @@ footer{
   </div>
 </nav>
 
+<!-- Mobile menu -->
 <div class="mob-nav" id="mobNav">
   <ul class="mob-nav-links">
     <li><a href="#work" class="mob-link">Work</a></li>
@@ -627,9 +608,10 @@ footer{
   </div>
 </div>
 
+<!-- ══ HERO ══════════════════════════════════ -->
 <section class="hero" id="home">
   <div class="hero-ghost" aria-hidden="true">dk</div>
-  <div class="hero-photo" id="heroBg">
+  <div class="hero-photo">
     <img src="images/IMG_4556.jpg" alt="Daniik Photography"
       onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=1200&q=85'">
   </div>
@@ -656,6 +638,7 @@ footer{
   </div>
 </section>
 
+<!-- ══ MARQUEE ═══════════════════════════════ -->
 <div class="mq-wrap" aria-hidden="true">
   <div class="mq-track">
     <span class="mq-item">Sports<span class="mq-dot">✦</span></span>
@@ -673,6 +656,7 @@ footer{
   </div>
 </div>
 
+<!-- ══ GALLERY ════════════════════════════════ -->
 <section class="gal" id="work">
   <div class="gal-header">
     <p class="gal-label">Selected Work</p>
@@ -689,6 +673,7 @@ footer{
   <div class="thumb-row" id="thumbRow"></div>
 </section>
 
+<!-- ══ ABOUT ══════════════════════════════════ -->
 <div class="about-strip" id="about">
   <div class="reveal">
     <div class="about-num" aria-hidden="true">01</div>
@@ -708,12 +693,14 @@ footer{
   </div>
 </div>
 
+<!-- ══ BOOKING ════════════════════════════════ -->
 <section class="bsec" id="booking">
   <div class="sec-header reveal">
     <p class="sec-label">Book a Session</p>
     <h2 class="sec-title">Let's make something<br><em>real</em> together</h2>
   </div>
 
+  <!-- Price calculator -->
   <div class="calc reveal" data-d="1">
     <div class="calc-l">
       <div class="cg">
@@ -727,21 +714,32 @@ footer{
       <div class="cg">
         <span class="cg-label">02 — Duration</span>
         <div class="cg-row">
-          <div class="copt time-o on" data-t="0–45 min" data-p="15"><span>0–45 min</span></div>
-          <div class="copt time-o" data-t="45 min–1:15 hr" data-p="30"><span>45 min–1:15 hr</span></div>
-          <div class="copt time-o" data-t="1:15–2 hr" data-p="45"><span>1:15–2 hr</span></div>
-          <div class="copt time-o" data-t="2 hr+" data-p="55"><span>2 hr+</span></div>
+          <div class="copt time-o on" data-t="0–45 min" data-p="10"><span>0–45 min</span></div>
+          <div class="copt time-o" data-t="45 min–1:15 hr" data-p="20"><span>45 min–1:15 hr</span></div>
+          <div class="copt time-o" data-t="1:15–2 hr" data-p="30"><span>1:15–2 hr</span></div>
+          <div class="copt time-o" data-t="2 hr+" data-p="45"><span>2 hr+</span></div>
         </div>
       </div>
+      <div class="cg">
+        <span class="cg-label">03 — Distance fee <span style="font-weight:200;opacity:.6">(auto-calculated · $1/mi from Apex)</span></span>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:.4rem;flex-wrap:wrap">
+          <span id="distStatus" style="font-size:.72rem;font-weight:200;color:var(--muted)">Enter your location in the form below to calculate</span>
+          <span id="distFeeLabel" style="font-size:.75rem;font-weight:300;color:var(--gold);-webkit-text-fill-color:var(--gold);display:none">+$<span id="distFeeNum">0</span> (<span id="distMiLabel">0</span> mi)</span>
+        </div>
+      </div>
+      <p style="font-size:.58rem;font-weight:200;color:var(--muted2);line-height:1.8;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(200,169,126,.08)">
+        ✦ &nbsp;Friends sometimes get a discount — just mention it in your message and we'll sort it out.
+      </p>
     </div>
     <div class="calc-r">
       <span class="price-tag-label">Estimated Price</span>
-      <div class="price-tag" id="priceTag">$15</div>
+      <div class="price-tag" id="priceTag">$10</div>
       <p class="price-note">Starting rate<br>Final quote confirmed on booking</p>
       <p class="price-hint">Select type and duration to get an instant estimate</p>
     </div>
   </div>
 
+  <!-- Form + Policy -->
   <div class="b-body">
     <div class="reveal">
       <h3 class="b-form-title">Request a <em>booking</em></h3>
@@ -749,7 +747,7 @@ footer{
       <form action="https://formspree.io/f/mlgalbve" method="POST" class="bform" id="bForm">
         <input type="hidden" name="event_type" id="iType" value="Sports">
         <input type="hidden" name="duration" id="iDur" value="0–45 min">
-        <input type="hidden" name="quoted_price" id="iPrice" value="$15">
+        <input type="hidden" name="quoted_price" id="iPrice" value="$10">
         <div class="frow">
           <div class="fg"><label>First Name</label><input type="text" name="fname" placeholder="First name" required autocomplete="given-name"></div>
           <div class="fg"><label>Last Name</label><input type="text" name="lname" placeholder="Last name" required autocomplete="family-name"></div>
@@ -769,7 +767,7 @@ footer{
             </select>
           </div>
         </div>
-        <div class="fg"><label>Location / Venue</label><input type="text" name="location" placeholder="Where are you shooting?"></div>
+        <div class="fg"><label>Location / Venue</label><input type="text" id="locInput" name="location" placeholder="Where are you shooting?" autocomplete="off"></div>
         <div class="fg"><label>Details & Vision</label><textarea name="message" placeholder="Vibe, references, what you're going for..." required></textarea></div>
         <button type="submit" class="bsub">Send Booking Request</button>
       </form>
@@ -801,37 +799,17 @@ footer{
   </div>
 </section>
 
+<!-- ══ FOOTER ══════════════════════════════════ -->
 <footer>
   <a href="#" class="footer-logo">Daniik Photography</a>
-  <p class="footer-copy">&copy; <span id="cYear">2025</span> Daniik — All rights reserved</p>
+  <p class="footer-copy">&copy; 2025 Daniik — All rights reserved</p>
   <div class="footer-soc">
     <a href="https://instagram.com/daniik_photo" target="_blank" rel="noopener">Instagram</a>
     <a href="#">Vsco</a>
   </div>
 </footer>
 
-<button id="btt" aria-label="Back to top">&#8593;</button>
-
 <script>
-/* ── FORCE SCROLL TO TOP ON LOAD ── */
-// Prevents the browser from auto-scrolling to where the user was before they refreshed
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
-}
-window.scrollTo(0, 0);
-
-/* ── BULLETPROOF LOADER INITIALIZATION (EXTENDED) ── */
-(function(){
-  const ldr = document.getElementById('ldr');
-  const removeLoader = () => { 
-    if (ldr) ldr.classList.add('out'); 
-    window.scrollTo(0, 0); // Double safety net to ensure we are at the top when the loader hides
-  };
-  
-  // Force the loader to stay up for exactly 2.5 seconds to build anticipation
-  setTimeout(removeLoader, 2500); 
-})();
-
 /* ── ALL IMAGES ── */
 const IMGS = [
   "images/IMG_4529.jpg","images/IMG_4650.jpg","images/IMG_4668.jpg","images/IMG_4728.jpg",
@@ -843,212 +821,224 @@ const IMGS = [
 ];
 const MAX = 15;
 
-function $$(sel){ return Array.from(document.querySelectorAll(sel) || []); }
+/* ── LOADER ── */
+window.addEventListener('load', () => setTimeout(() => document.getElementById('ldr').classList.add('out'), 1600));
 
 /* ── CURSOR (desktop only) ── */
-try {
-  const cur = document.getElementById('cur');
-  const ring = document.getElementById('cur-ring');
-  if(window.matchMedia && window.matchMedia('(pointer:fine)').matches && cur && ring){
-    let mx=0,my=0,rx=0,ry=0;
-    document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
-    (function raf(){ rx+=(mx-rx)*.09; ry+=(my-ry)*.09; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(raf); })();
-    document.querySelectorAll('a,button,.copt,.thumb').forEach(el => {
-      el.addEventListener('mouseenter', () => document.body.classList.add('ch'));
-      el.addEventListener('mouseleave', () => document.body.classList.remove('ch'));
-    });
-  }
-} catch(e) {}
+const $cur = document.getElementById('cur');
+const $ring = document.getElementById('cur-ring');
+if(window.matchMedia('(pointer:fine)').matches){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; $cur.style.left=mx+'px'; $cur.style.top=my+'px'; });
+  (function raf(){ rx+=(mx-rx)*.09; ry+=(my-ry)*.09; $ring.style.left=rx+'px'; $ring.style.top=ry+'px'; requestAnimationFrame(raf); })();
+  document.querySelectorAll('a,button,.copt,.thumb').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('ch'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('ch'));
+  });
+}
 
-/* ── NAV & ADD-ON SCROLL LOGIC ── */
-try {
-  const nav = document.getElementById('nav');
-  const btt = document.getElementById('btt');
-  const heroBg = document.getElementById('heroBg');
-
-  const onScroll = () => {
-    if(nav) nav.classList.toggle('scrolled', window.scrollY > 40);
-    if(btt) btt.classList.toggle('show', window.scrollY > 600);
-    if(heroBg && window.scrollY < window.innerHeight) {
-      heroBg.style.transform = `translateY(${window.scrollY * 0.25}px)`;
-    }
-  };
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-
-  if(btt) btt.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
-} catch(e) {}
+/* ── NAV SCROLL ── */
+const $nav = document.getElementById('nav');
+const onScroll = () => $nav.classList.toggle('scrolled', window.scrollY > 40);
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
 
 /* ── HAMBURGER ── */
-try {
-  const ham = document.getElementById('ham');
-  const mob = document.getElementById('mobNav');
-  if(ham && mob) {
-    ham.addEventListener('click', () => {
-      const o = ham.classList.toggle('open');
-      mob.classList.toggle('open', o);
-      document.body.style.overflow = o ? 'hidden' : '';
-    });
-    mob.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => {
-      ham.classList.remove('open');
-      mob.classList.remove('open');
-      document.body.style.overflow = '';
-    }));
-  }
-} catch(e) {}
+const $ham = document.getElementById('ham');
+const $mob = document.getElementById('mobNav');
+$ham.addEventListener('click', () => {
+  const o = $ham.classList.toggle('open');
+  $mob.classList.toggle('open', o);
+  document.body.style.overflow = o ? 'hidden' : '';
+});
+$mob.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => {
+  $ham.classList.remove('open');
+  $mob.classList.remove('open');
+  document.body.style.overflow = '';
+}));
 
 /* ── GALLERY ── */
-try {
-  const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];} return b; };
-  const images = shuffle(IMGS).slice(0, MAX);
+const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];} return b; };
+const images = shuffle(IMGS).slice(0, MAX);
 
-  const track = document.getElementById('galTrack');
-  const thumbs = document.getElementById('thumbRow');
-  const totN = document.getElementById('totN');
-  
-  if (track && thumbs && totN) {
-    let idx=0, autoT, progT, pVal=0;
-    const TICK = 4500;
+const $track = document.getElementById('galTrack');
+const $thumbs = document.getElementById('thumbRow');
+let idx=0, autoT, progT, pVal=0;
+const TICK = 4500;
 
-    totN.textContent = String(images.length).padStart(2,'0');
+document.getElementById('totN').textContent = String(images.length).padStart(2,'0');
 
-    images.forEach((src, i) => {
-      const s = document.createElement('div');
-      s.className = 'gal-slide' + (i===0?' on':'');
-      s.innerHTML = `<img src="${src}" loading="${i<2?'eager':'lazy'}" alt="Daniik photo">`;
-      track.appendChild(s);
+images.forEach((src, i) => {
+  const s = document.createElement('div');
+  s.className = 'gal-slide' + (i===0?' on':'');
+  s.innerHTML = `<img src="${src}" loading="${i<2?'eager':'lazy'}" alt="Daniik photo">`;
+  $track.appendChild(s);
 
-      const t = document.createElement('div');
-      t.className = 'thumb' + (i===0?' on':'');
-      t.innerHTML = `<img src="${src}" loading="lazy" alt="">`;
-      t.addEventListener('click', () => goTo(i));
-      thumbs.appendChild(t);
-    });
-    document.querySelector('.gal').classList.add('loaded');
+  const t = document.createElement('div');
+  t.className = 'thumb' + (i===0?' on':'');
+  t.innerHTML = `<img src="${src}" loading="lazy" alt="">`;
+  t.addEventListener('click', () => goTo(i));
+  $thumbs.appendChild(t);
+});
+document.querySelector('.gal').classList.add('loaded');
 
-    function goTo(n) {
-      $$('.gal-slide')[idx]?.classList.remove('on');
-      $$('.thumb')[idx]?.classList.remove('on');
-      idx = ((n % images.length) + images.length) % images.length;
-      $$('.gal-slide')[idx]?.classList.add('on');
-      const th = $$('.thumb');
-      if(th[idx]) {
-        th[idx].classList.add('on');
-        th[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-      }
-      track.style.transform = `translateX(-${idx*100}%)`;
-      const curN = document.getElementById('curN');
-      if(curN) curN.textContent = String(idx+1).padStart(2,'0');
-      resetProg();
-    }
-    
-    function resetProg(){
-      clearInterval(progT); pVal=0;
-      const pf = document.getElementById('progFill');
-      if(pf) {
-        pf.style.width='0%';
-        progT = setInterval(()=>{ pVal+=100/(TICK/100); if(pVal>=100)pVal=100; pf.style.width=pVal+'%'; },100);
-      }
-    }
-    const startAuto = () => autoT = setInterval(() => goTo(idx+1), TICK);
-    const stopAuto  = () => clearInterval(autoT);
-    startAuto(); resetProg();
+function goTo(n) {
+  $$('.gal-slide')[idx].classList.remove('on');
+  $$('.thumb')[idx].classList.remove('on');
+  idx = ((n % images.length) + images.length) % images.length;
+  $$('.gal-slide')[idx].classList.add('on');
+  const th = $$('.thumb');
+  th[idx].classList.add('on');
+  $track.style.transform = `translateX(-${idx*100}%)`;
+  document.getElementById('curN').textContent = String(idx+1).padStart(2,'0');
+  // Scroll thumb strip horizontally only — never hijack page scroll
+  const strip = document.getElementById('thumbRow');
+  if(strip){ const t=th[idx]; strip.scrollTo({left:t.offsetLeft - strip.clientWidth/2 + t.clientWidth/2, behavior:'smooth'}); }
+  resetProg();
+}
+function $$(sel){ return [...document.querySelectorAll(sel)]; }
+function resetProg(){
+  clearInterval(progT); pVal=0;
+  document.getElementById('progFill').style.width='0%';
+  progT = setInterval(()=>{ pVal+=100/(TICK/100); if(pVal>=100)pVal=100; document.getElementById('progFill').style.width=pVal+'%'; },100);
+}
+const startAuto = () => autoT = setInterval(() => goTo(idx+1), TICK);
+const stopAuto  = () => clearInterval(autoT);
+startAuto(); resetProg();
 
-    document.getElementById('nextBtn')?.addEventListener('click', ()=>{ stopAuto(); goTo(idx+1); startAuto(); });
-    document.getElementById('prevBtn')?.addEventListener('click', ()=>{ stopAuto(); goTo(idx-1); startAuto(); });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ stopAuto(); goTo(idx+1); startAuto(); });
+document.getElementById('prevBtn').addEventListener('click', ()=>{ stopAuto(); goTo(idx-1); startAuto(); });
 
-    const gal = document.querySelector('.gal');
-    if(gal) {
-      gal.addEventListener('mouseenter', stopAuto);
-      gal.addEventListener('mouseleave', ()=>{ startAuto(); resetProg(); });
+const $gal = document.querySelector('.gal');
+$gal.addEventListener('mouseenter', stopAuto);
+$gal.addEventListener('mouseleave', ()=>{ startAuto(); resetProg(); });
 
-      let tx=null;
-      gal.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; },{passive:true});
-      gal.addEventListener('touchend', e=>{
-        if(tx===null)return;
-        const dx=tx-e.changedTouches[0].clientX;
-        if(Math.abs(dx)>38){ stopAuto(); dx>0?goTo(idx+1):goTo(idx-1); startAuto(); }
-        tx=null;
-      },{passive:true});
-    }
+/* Swipe */
+let tx=null;
+$gal.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; },{passive:true});
+$gal.addEventListener('touchend', e=>{
+  if(tx===null)return;
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>38){ stopAuto(); dx>0?goTo(idx+1):goTo(idx-1); startAuto(); }
+  tx=null;
+},{passive:true});
 
-    document.addEventListener('keydown', e=>{
-      if(e.key==='ArrowRight'){stopAuto();goTo(idx+1);startAuto();}
-      if(e.key==='ArrowLeft'){stopAuto();goTo(idx-1);startAuto();}
-    });
-  }
-} catch(e) {}
+/* Keyboard */
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'){stopAuto();goTo(idx+1);startAuto();}
+  if(e.key==='ArrowLeft'){stopAuto();goTo(idx-1);startAuto();}
+});
 
 /* ── PRICE CALC ── */
-try {
-  const typeOpts = $$('.type-o');
-  const timeOpts = $$('.time-o');
-  const price = document.getElementById('priceTag');
+// Apex Community Park — start point
+const ORIGIN_LAT = 35.74728;
+const ORIGIN_LNG = -78.81597;
 
-  function calcPrice(){
-    const ty = document.querySelector('.type-o.on');
-    const ti = document.querySelector('.time-o.on');
-    if(ty && ti && price) {
-      const p = '$'+ti.dataset.p;
-      price.style.opacity='0'; price.style.transform='translateY(6px)';
-      setTimeout(()=>{ price.textContent=p; price.style.transition='opacity .35s,transform .38s'; price.style.opacity='1'; price.style.transform='translateY(0)'; },160);
-      document.getElementById('iPrice').value=p;
-      document.getElementById('iType').value=ty.dataset.v;
-      document.getElementById('iDur').value=ti.dataset.t;
-      document.getElementById('bEcho').textContent=ty.dataset.v+' · '+ti.dataset.t+' · '+p;
-    }
+const $typeOpts = $$('.type-o');
+const $timeOpts = $$('.time-o');
+const $price    = document.getElementById('priceTag');
+let calcMiles   = 0; // updated by geocoder
+
+// Haversine distance in miles
+function haversine(lat1, lng1, lat2, lng2){
+  const R = 3958.8, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+function calcPrice(){
+  const ti    = document.querySelector('.time-o.on');
+  const ty    = document.querySelector('.type-o.on');
+  const base  = parseInt(ti.dataset.p, 10);
+  const miles = Math.round(calcMiles);
+  const total = base + miles;
+
+  // Animate price
+  $price.style.opacity='0'; $price.style.transform='translateY(6px)';
+  setTimeout(()=>{
+    $price.textContent='$'+total;
+    $price.style.transition='opacity .35s,transform .38s';
+    $price.style.opacity='1'; $price.style.transform='translateY(0)';
+  }, 160);
+
+  // Echo line
+  let breakdown = ty.dataset.v + ' · ' + ti.dataset.t;
+  if(miles > 0) breakdown += ' · +$'+miles+' travel';
+  breakdown += ' → $'+total;
+  document.getElementById('bEcho').textContent = breakdown;
+  document.getElementById('iPrice').value = '$'+total;
+  document.getElementById('iType').value  = ty.dataset.v;
+  document.getElementById('iDur').value   = ti.dataset.t;
+}
+
+$typeOpts.forEach(o => o.addEventListener('click', () => { $typeOpts.forEach(x=>x.classList.remove('on')); o.classList.add('on'); calcPrice(); }));
+$timeOpts.forEach(o => o.addEventListener('click', () => { $timeOpts.forEach(x=>x.classList.remove('on')); o.classList.add('on'); calcPrice(); }));
+
+/* ── LOCATION GEOCODER (Nominatim, no key needed) ── */
+const $locInput   = document.getElementById('locInput');
+const $distStatus = document.getElementById('distStatus');
+const $distFeeEl  = document.getElementById('distFeeLabel');
+const $distFeeNum = document.getElementById('distFeeNum');
+const $distMiLbl  = document.getElementById('distMiLabel');
+let geoTimer = null;
+
+function setDistStatus(msg, loading){
+  $distStatus.textContent = msg;
+  $distStatus.style.color = loading ? 'rgba(200,169,126,.5)' : 'var(--muted)';
+  $distStatus.style.webkitTextFillColor = $distStatus.style.color;
+}
+
+$locInput.addEventListener('input', () => {
+  clearTimeout(geoTimer);
+  const val = $locInput.value.trim();
+  if(!val){ setDistStatus('Enter your location to calculate distance'); $distFeeEl.style.display='none'; calcMiles=0; calcPrice(); return; }
+  setDistStatus('Calculating distance…', true);
+  geoTimer = setTimeout(() => geocode(val), 900); // debounce 900ms so we don't spam on every keystroke
+});
+
+async function geocode(query){
+  try{
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+    const res  = await fetch(url, { headers:{'Accept':'application/json','User-Agent':'daniik-photo-site'} });
+    const data = await res.json();
+    if(!data.length){ setDistStatus('Location not found — distance not added'); $distFeeEl.style.display='none'; calcMiles=0; calcPrice(); return; }
+    const { lat, lon } = data[0];
+    const mi = haversine(ORIGIN_LAT, ORIGIN_LNG, parseFloat(lat), parseFloat(lon));
+    calcMiles = mi;
+    const miRound = Math.round(mi);
+    $distMiLbl.textContent   = miRound;
+    $distFeeNum.textContent  = miRound;
+    $distFeeEl.style.display = 'inline';
+    setDistStatus('From Apex Community Park:');
+    calcPrice();
+  } catch(err){
+    setDistStatus('Could not calculate distance'); $distFeeEl.style.display='none'; calcMiles=0; calcPrice();
   }
-
-  typeOpts.forEach(o=>o.addEventListener('click',()=>{ typeOpts.forEach(x=>x.classList.remove('on')); o.classList.add('on'); calcPrice(); }));
-  timeOpts.forEach(o=>o.addEventListener('click',()=>{ timeOpts.forEach(x=>x.classList.remove('on')); o.classList.add('on'); calcPrice(); }));
-} catch(e) {}
+}
 
 /* ── DATE MIN ── */
-try {
-  const bd = document.getElementById('bDate');
-  if(bd){ const d=new Date(); d.setDate(d.getDate()+2); bd.min=d.toISOString().split('T')[0]; }
-} catch(e) {}
+const $bd = document.getElementById('bDate');
+if($bd){ const d=new Date(); d.setDate(d.getDate()+2); $bd.min=d.toISOString().split('T')[0]; }
 
 /* ── FORM SUBMIT ── */
-try {
-  const bForm = document.getElementById('bForm');
-  if (bForm) {
-    bForm.addEventListener('submit', function(e){
-      e.preventDefault();
-      const btn = this.querySelector('.bsub');
-      if(btn) btn.textContent='Sending…';
-      fetch(this.action,{method:'POST',body:new FormData(this),headers:{Accept:'application/json'}})
-        .then(r=>{
-          this.style.display='none'; 
-          document.getElementById('bConfirm').classList.add('show');
-        })
-        .catch(()=>{ 
-          this.style.display='none'; 
-          document.getElementById('bConfirm').classList.add('show'); 
-        });
-    });
-  }
-} catch(e) {}
+document.getElementById('bForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const btn = this.querySelector('.bsub');
+  btn.textContent='Sending…';
+  fetch(this.action,{method:'POST',body:new FormData(this),headers:{Accept:'application/json'}})
+    .then(r=>{
+      if(r.ok){ this.style.display='none'; document.getElementById('bConfirm').classList.add('show'); }
+      else{ btn.textContent='Error — try again'; }
+    })
+    .catch(()=>{ this.style.display='none'; document.getElementById('bConfirm').classList.add('show'); });
+});
 
 /* ── SCROLL REVEAL ── */
-try {
-  if ('IntersectionObserver' in window) {
-    const revObs = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); revObs.unobserve(e.target); } });
-    },{threshold:.07});
-    $$('.reveal').forEach(el=>revObs.observe(el));
-  } else {
-    // Graceful fallback for ancient browsers
-    $$('.reveal').forEach(el=>el.classList.add('visible'));
-  }
-} catch(e) {}
-
-/* ── DYNAMIC COPYRIGHT YEAR ── */
-try {
-  const cYear = document.getElementById('cYear');
-  if (cYear) cYear.textContent = new Date().getFullYear();
-} catch(e) {}
-
+const revObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); revObs.unobserve(e.target); } });
+},{threshold:.07});
+$$('.reveal').forEach(el=>revObs.observe(el));
 </script>
 </body>
 </html>
